@@ -48,3 +48,65 @@ You should be familiar, by the end of the reading, with the following key concep
 Please refer to the links above as official documentation throughout the 4 days of the course.
 
 ## 3. Fundamentals practice exercises
+
+The `fundamentals/` folder contains a .NET 10 solution with two projects:
+
+- **`Fundamentals`** — a console app with all the lesson examples (what the course teaches) and your exercises (what you implement).
+- **`Fundamentals.Tests`** — an xUnit test project that verifies both the lesson examples and your exercise implementations.
+
+For each theme, lessons live in `Fundamentals/Lessons/<Theme>.cs` and your exercises live in `Fundamentals/Exercises/<Theme>.cs`. The two are separated so you always know where the teaching material ends and your work begins.
+
+### 3.1 Load the project in Visual Studio
+
+1. Open Visual Studio.
+2. **File → Open → Project/Solution…**
+3. Navigate to the `fundamentals/` folder and open **`Fundamentals.slnx`**.
+4. Wait for Visual Studio to restore NuGet packages (status bar at the bottom will show "Ready" when it's done).
+
+If VS complains about the SDK version, check that you have .NET 10 installed (`dotnet --list-sdks` in a terminal). `global.json` is configured to accept any .NET 10 SDK you have.
+
+### 3.2 Run the console program (see the lessons narrated)
+
+1. In **Solution Explorer**, right-click the **`Fundamentals`** project → **Set as Startup Project**.
+2. Press **F5** (Debug → Start Debugging) or **Ctrl+F5** (Debug → Start Without Debugging).
+3. A console window opens showing each lesson's output, section by section. Read through and match what you see against the matching `Lessons/<Theme>.cs` file — the code produces the output you're reading.
+
+The program also has commented-out lines at the end of each theme's section for the exercise calls. As you implement each exercise, uncomment the corresponding line and re-run — you'll see your output alongside the lesson examples.
+
+### 3.3 Run the tests
+
+1. Open **Test Explorer**: menu **Test → Test Explorer** (or **Ctrl + E, T**).
+2. Wait for Visual Studio to discover the tests — the panel will populate with the full list, grouped by namespace:
+   - `Fundamentals.Tests.Lessons.*` — guards for the teaching examples (these should always pass)
+   - `Fundamentals.Tests.Exercises.*` — validators for your exercises (these will fail until you implement each method)
+3. Click **Run All Tests In View** (▶▶ icon at the top of the panel), or right-click any individual test and choose **Run**.
+
+Baseline at the start: **all lesson tests pass, all exercise tests fail** (the exercise methods throw `NotImplementedException` in their scaffolded state).
+
+### 3.4 How to work through the exercises
+
+Work through the themes **in order**. For each theme:
+
+1. **Read the lesson file** — `Fundamentals/Lessons/<Theme>.cs`. Take your time with the inline comments; each example method shows one specific point. Match what you're reading against the narrated output you saw when running the console program.
+2. **Open the exercise file** — `Fundamentals/Exercises/<Theme>.cs`. Read the first exercise's description, example, and hint.
+3. **Implement the exercise** — replace the `throw new NotImplementedException(...)` with your solution.
+4. **Run the matching exercise test** in Test Explorer. Filter by the exercise name (e.g. `Add_`) and hit run. Iterate until the test is green.
+5. **Uncomment the matching line** in `Program.cs` (under the `=== <THEME> — your exercises ===` header) and run the console program to see your output alongside the lesson examples.
+6. **Repeat** for each exercise in the file.
+
+Skip the **advanced** sections (`Lessons/<Theme>Advanced.cs` and `Exercises/<Theme>Advanced.cs`) as you go. Come back to them only once you've completed the core exercises for **all** themes.
+
+### 3.5 Theme order
+
+Complete each theme fully before moving to the next:
+
+1. **Numbers** — integers, doubles, casting between types. Lesson in `Lessons/Numbers.cs`, exercises in `Exercises/Numbers.cs`.
+2. **Strings** — `char` vs `string`, quote styles (regular / verbatim / raw), immutability, comparison, `Parse`/`TryParse`, format specifiers. Lesson in `Lessons/Strings.cs`, exercises in `Exercises/Strings.cs`.
+3. **Arrays** — declaration forms, strong typing, default values, indexing and `.Length`, out-of-bounds exceptions, iteration (`foreach` vs `for`), `Array.Sort` / `Reverse` / `IndexOf`. Lesson in `Lessons/Arrays.cs`, exercises in `Exercises/Arrays.cs`.
+4. **ControlFlow** — `if` / `else if` syntax differences, the no-braces gotcha, `switch` statement (C#'s break flip vs JavaScript), ternary refresher, `while` + `break`, classic `for`, `foreach`. Lesson in `Lessons/ControlFlow.cs`, exercises in `Exercises/ControlFlow.cs`.
+
+Once all four themes' core exercises are green in Test Explorer, tackle the advanced sections:
+
+- `StringsAdvanced` — `StringBuilder` + a small CSV-row parser.
+- `ArraysAdvanced` — multi-dimensional (`int[,]`) vs jagged (`int[][]`) arrays + a matrix transpose and a duplicate-detection exercise.
+- `ControlFlowAdvanced` — `switch` *expression* (C# 8+) and relational patterns (`>= 70 => "A"`) for collapsing else-if chains into one tidy block.
