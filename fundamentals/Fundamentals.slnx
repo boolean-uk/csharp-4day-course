@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="Fundamentals.Tests/Fundamentals.Tests.csproj" />
+  <Project Path="Fundamentals/Fundamentals.csproj" />
+</Solution>
