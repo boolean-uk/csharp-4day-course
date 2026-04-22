@@ -385,3 +385,76 @@ Console.WriteLine($"ClassAssignmentShares()    a.X = {cA.X}, b.X = {cB.X}   ← 
 Console.WriteLine("\n-- Experiment 2: Mutate(a) (method call) --");
 Console.WriteLine($"StructPassingCopies().X    = {Lessons.StructsVsClasses.StructPassingCopies().X}    ← struct: helper mutated a COPY; caller untouched");
 Console.WriteLine($"ClassPassingShares().X     = {Lessons.StructsVsClasses.ClassPassingShares().X}   ← class:  helper mutated the caller's object");
+
+
+Console.WriteLine("\n\n=== ENUMS — examples ===\n");
+
+Console.WriteLine("-- Lesson B: using enum values --");
+Console.WriteLine($"StartOfDay()                    = {Lessons.Enums.StartOfDay()}");
+Console.WriteLine($"MustStop(Red)                   = {Lessons.Enums.MustStop(Lessons.TrafficLight.Red)}");
+Console.WriteLine($"MustStop(Green)                 = {Lessons.Enums.MustStop(Lessons.TrafficLight.Green)}");
+
+Console.WriteLine("\n-- Lesson C: switch over the enum --");
+Console.WriteLine($"Action(Red)                     = \"{Lessons.Enums.Action(Lessons.TrafficLight.Red)}\"");
+Console.WriteLine($"Action(Amber)                   = \"{Lessons.Enums.Action(Lessons.TrafficLight.Amber)}\"");
+Console.WriteLine($"Action(Green)                   = \"{Lessons.Enums.Action(Lessons.TrafficLight.Green)}\"");
+
+Console.WriteLine("\n-- Lesson D: underlying int values --");
+Console.WriteLine($"UnderlyingValueOfRed()          = {Lessons.Enums.UnderlyingValueOfRed()}   ← first member defaults to 0");
+Console.WriteLine($"UnderlyingValueOfGreen()        = {Lessons.Enums.UnderlyingValueOfGreen()}   ← third member is 2");
+Console.WriteLine($"NotFoundCode()                  = {Lessons.Enums.NotFoundCode()}   ← explicit value (HttpStatus.NotFound = 404)");
+
+Console.WriteLine("\n-- Lesson E: string ↔ enum --");
+Console.WriteLine($"GreenAsString()                 = \"{Lessons.Enums.GreenAsString()}\"   ← ToString() gives the member name");
+Console.WriteLine($"TryParseLight(\"amber\")          = {(Lessons.Enums.TryParseLight("amber", out Lessons.TrafficLight parsedLight) ? $"true, value = {parsedLight}" : "false")}  ← case-insensitive");
+Console.WriteLine($"TryParseLight(\"purple\")         = {(Lessons.Enums.TryParseLight("purple", out Lessons.TrafficLight _) ? "true" : "false")}  ← no exception");
+
+Console.WriteLine("\n=== ENUMS — your exercises ===");
+Console.WriteLine("Implement each method in Exercises/Enums.cs, then uncomment below.\n");
+
+// Console.WriteLine($"Prompt(Idle)                    = \"{Exercises.Enums.Prompt(Exercises.VendingMachineState.Idle)}\"");
+// Console.WriteLine($"Prompt(OutOfStock)              = \"{Exercises.Enums.Prompt(Exercises.VendingMachineState.OutOfStock)}\"");
+// Console.WriteLine($"CanAcceptCoin(Idle)             = {Exercises.Enums.CanAcceptCoin(Exercises.VendingMachineState.Idle)}");
+// Console.WriteLine($"CanAcceptCoin(Dispensing)       = {Exercises.Enums.CanAcceptCoin(Exercises.VendingMachineState.Dispensing)}");
+// Console.WriteLine($"ParseState(\"Idle\")               = {(Exercises.Enums.ParseState("Idle", out Exercises.VendingMachineState parsedState) ? $"true, value = {parsedState}" : "false")}");
+// Console.WriteLine($"ParseState(\"dancing\")            = {(Exercises.Enums.ParseState("dancing", out Exercises.VendingMachineState _) ? "true" : "false")}");
+
+
+Console.WriteLine("\n\n=== EXCEPTIONS — examples ===\n");
+
+Console.WriteLine("-- Lesson A: try / catch --");
+Console.WriteLine($"ParseOrFallback(\"42\", -1)       = {Lessons.Exceptions.ParseOrFallback("42", -1)}");
+Console.WriteLine($"ParseOrFallback(\"abc\", -1)      = {Lessons.Exceptions.ParseOrFallback("abc", -1)}   ← Parse threw, catch returned fallback");
+
+Console.WriteLine("\n-- Lesson B: throw --");
+Console.WriteLine($"Divide(10, 2)                   = {Lessons.Exceptions.Divide(10, 2)}");
+try { Lessons.Exceptions.Divide(10, 0); }
+catch (ArgumentException ex) { Console.WriteLine($"Divide(10, 0)                   threw ArgumentException: {ex.Message}"); }
+
+Console.WriteLine("\n-- Lesson C: catching what you threw --");
+Console.WriteLine($"SafeDivideAsMessage(10, 2)      = \"{Lessons.Exceptions.SafeDivideAsMessage(10, 2)}\"");
+Console.WriteLine($"SafeDivideAsMessage(10, 0)      = \"{Lessons.Exceptions.SafeDivideAsMessage(10, 0)}\"   ← caught and formatted");
+
+Console.WriteLine("\n-- Lesson D: catch the SPECIFIC type --");
+Console.WriteLine($"SwallowEverything_AntiPattern(\"abc\")    = {Lessons.Exceptions.SwallowEverything_AntiPattern("abc")}   ← bad input, 0 is fair enough");
+Console.WriteLine($"SwallowEverything_AntiPattern(null)     = {Lessons.Exceptions.SwallowEverything_AntiPattern(null!)}   ← BUG silently hidden! Null became 0.");
+try { Lessons.Exceptions.ParseOrFallback(null!, -1); }
+catch (ArgumentNullException) { Console.WriteLine("ParseOrFallback(null, -1)               threw ArgumentNullException   ← tight catch let the bug bubble up"); }
+
+Console.WriteLine("\n-- Lesson E: prefer non-throwing TryXxx --");
+Console.WriteLine($"TryDivide(10, 2, out r)                 = {(Lessons.Exceptions.TryDivide(10, 2, out int tryDivResult) ? $"true,  r = {tryDivResult}" : "false")}   ← our own TryXxx twin of Divide");
+Console.WriteLine($"TryDivide(10, 0, out r)                 = {(Lessons.Exceptions.TryDivide(10, 0, out int _) ? "true" : "false, r left at 0")}   ← no exception, caller decides what to do");
+Console.WriteLine($"ParsePreferred(\"42\", -1)                = {Lessons.Exceptions.ParsePreferred("42", -1)}");
+Console.WriteLine($"ParsePreferred(\"abc\", -1)               = {Lessons.Exceptions.ParsePreferred("abc", -1)}   ← same shape, TryXxx provided by the stdlib");
+
+Console.WriteLine("\n=== EXCEPTIONS — your exercises ===");
+Console.WriteLine("Implement each method in Exercises/Exceptions.cs, then uncomment below.\n");
+
+// Console.WriteLine($"RequirePositive(5)              = {Exercises.Exceptions.RequirePositive(5)}");
+// try { Exercises.Exceptions.RequirePositive(-3); }
+// catch (ArgumentException ex) { Console.WriteLine($"RequirePositive(-3)             threw ArgumentException: {ex.Message}"); }
+// Console.WriteLine($"Withdraw(100, 30)               = {Exercises.Exceptions.Withdraw(100, 30)}");
+// try { Exercises.Exceptions.Withdraw(50, 100); }
+// catch (InvalidOperationException ex) { Console.WriteLine($"Withdraw(50, 100)               threw InvalidOperationException: {ex.Message}"); }
+// Console.WriteLine($"SafeWithdraw(100, 30)           = {Exercises.Exceptions.SafeWithdraw(100, 30)}");
+// Console.WriteLine($"SafeWithdraw(50, 100)           = {Exercises.Exceptions.SafeWithdraw(50, 100)}   ← refused; balance unchanged");

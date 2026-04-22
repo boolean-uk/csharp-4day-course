@@ -108,8 +108,10 @@ Complete each theme fully before moving to the next:
 6. **Structs** — defining your own value types, properties with `{ get; set; }`, constructors, instance methods, and the big C#-specific point: structs are **value types** (copied on assignment and on method calls). Lesson in `Lessons/Structs.cs`, exercises in `Exercises/Structs.cs`.
 7. **Classes** — same syntax as structs (properties, constructor, methods), but classes are **reference types** — assigning or passing an instance shares the same object. Worked example: a `Course` class that holds a list of `Student`s (from the Structs lesson) with `Enroll` / `Remove` / `Count`. Lesson in `Lessons/Classes.cs`, exercises in `Exercises/Classes.cs`.
 8. **Structs vs Classes** — synthesis: two types with identical shape (`PointStruct` and `PointClass`) run through the same two experiments (assignment, method-passing) to show that **one keyword flipped** produces opposite outcomes every time. Lesson in `Lessons/StructsVsClasses.cs` (no exercises — compare/contrast only).
+9. **Enums** — declaring a named, type-safe set of constants, the `switch` statement payoff (enum cases instead of magic strings), underlying int values, and `Enum.TryParse` for turning user input into enum values. Lesson in `Lessons/Enums.cs`, exercises in `Exercises/Enums.cs`.
+10. **Exceptions** — `try` / `catch` for recovery, `throw` for signalling impossible states (`ArgumentException`, `InvalidOperationException`), and best practices: catch specific types, never swallow `Exception`, prefer `TryXxx` when failure is expected. Lesson in `Lessons/Exceptions.cs`, exercises in `Exercises/Exceptions.cs`.
 
-Once all four themes' core exercises are green in Test Explorer, tackle the advanced sections:
+Once the core themes' exercises are green in Test Explorer, tackle the advanced sections:
 
 - `StringsAdvanced` — `StringBuilder` + a small CSV-row parser.
 - `ArraysAdvanced` — multi-dimensional (`int[,]`) vs jagged (`int[][]`) arrays + a matrix transpose and a duplicate-detection exercise.
