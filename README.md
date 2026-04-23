@@ -116,3 +116,54 @@ Once the core themes' exercises are green in Test Explorer, tackle the advanced 
 - `StringsAdvanced` — `StringBuilder` + a small CSV-row parser.
 - `ArraysAdvanced` — multi-dimensional (`int[,]`) vs jagged (`int[][]`) arrays + a matrix transpose and a duplicate-detection exercise.
 - `ControlFlowAdvanced` — `switch` *expression* (C# 8+) and relational patterns (`>= 70 => "A"`) for collapsing else-if chains into one tidy block.
+
+## 4. Bank project (capstone)
+
+Once all the core fundamentals exercises are green, move on to the **Bank** capstone in `projects/bank/`. This is where you put everything together — classes, structs, enums, exceptions, `List<T>`, properties, encapsulation — into one small object-oriented program.
+
+The solution contains two projects:
+
+- **`Bank`** — a console app with stubbed-out types (`Transaction`, `Account`, `Bank`, `TransactionType`). Every method throws `NotImplementedException` in its scaffolded state.
+- **`Bank.Tests`** — an xUnit test project that specifies the full behaviour. **All tests fail at the start.** Your job is to make them green.
+
+The full spec (types, rules, method signatures) lives in **`projects/bank/README.md`** — read that before you start writing code. It also contains two mini-lessons on `decimal` (why money is never `double`) and `DateTime` formatting (for `Statement()`), plus stretch extensions once the core tests pass.
+
+### 4.1 Load the project in Visual Studio
+
+1. Open Visual Studio.
+2. **File → Open → Project/Solution…**
+3. Navigate to `projects/bank/` and open **`Bank.slnx`**.
+4. Wait for NuGet restore to finish (status bar shows "Ready").
+
+If VS complains about the SDK version, check `dotnet --list-sdks` in a terminal — `global.json` is configured to accept any .NET 10 SDK.
+
+### 4.2 Run the tests (the red starting point)
+
+1. Open **Test Explorer**: menu **Test → Test Explorer** (or **Ctrl + E, T**).
+2. Click **Run All Tests In View** (▶▶ icon at the top of the panel).
+3. Everything is red. That's expected — the stubs throw `NotImplementedException` everywhere. The tests are your specification.
+
+### 4.3 Run the console demo
+
+1. In **Solution Explorer**, right-click the **`Bank`** project → **Set as Startup Project**.
+2. Press **Ctrl+F5** (Start Without Debugging).
+
+At first the demo will crash with `NotImplementedException` — that's fine. Once you've implemented the core types, it runs end-to-end and you can extend `Program.cs` to play with your bank.
+
+### 4.4 How to work through it (red → green, test by test)
+
+Work in the order suggested in `projects/bank/README.md`:
+
+1. `TransactionTests` — smallest surface, warm-up.
+2. `AccountTests` — construction, `Balance`, `Deposit`, `Withdraw`.
+3. `AccountTests` — `Statement` and `FindTransactions`.
+4. `BankTests` — tying everything together.
+
+For each test:
+
+1. **Read the test** to understand what it expects.
+2. **Open the matching source file** (`Transaction.cs`, `Account.cs`, or `Bank.cs`) and implement just enough code to make that one test pass.
+3. **Re-run** the test in Test Explorer. Green? Move on. Red? Read the failure message — xUnit tells you the expected vs actual value.
+4. **Don't jump ahead.** Resist the urge to implement five methods at once. One test green at a time keeps the feedback loop tight and teaches you the TDD cadence we'll lean on for the rest of the course.
+
+When every test in Test Explorer is green, run the console app (`Ctrl+F5`) to see your bank working end-to-end. Then — if you have time — pick an extension from the "Extensions" section of `projects/bank/README.md` (Transfers, Overdrafts, Interest, Polymorphic account types). Extensions have **no tests provided** — you write the code **and** the tests yourself.
