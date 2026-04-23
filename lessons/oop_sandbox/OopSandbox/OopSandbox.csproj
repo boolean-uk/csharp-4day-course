@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <!-- Project namespace is globally imported so Program.cs and live-added
+       files don't need `using OopSandbox;` at the top. Keeps the live demo
+       clean of boilerplate. -->
+  <ItemGroup>
+    <Using Include="OopSandbox" />
+  </ItemGroup>
+
+</Project>
