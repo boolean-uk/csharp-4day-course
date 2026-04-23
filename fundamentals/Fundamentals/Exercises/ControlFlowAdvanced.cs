@@ -11,7 +11,13 @@ public static class ControlFlowAdvanced
     // Hint: see Lesson J. Arms are tested top-to-bottom — put `>= 70` first.
     public static string GradeFromMark(int mark)
     {
-        throw new NotImplementedException("TODO: return mark switch { >= 70 => \"A\", ... }");
+        return mark switch
+        {
+            >= 70 => "A",
+            >= 60 => "B",
+            >= 50 => "C",
+            _ => "F",
+        };
     }
 
     // EXERCISE 2: TrafficLightAction
@@ -27,6 +33,12 @@ public static class ControlFlowAdvanced
     //           "amber" or "yellow" => "prepare",
     public static string TrafficLightAction(string colour)
     {
-        throw new NotImplementedException("TODO: return colour switch { \"red\" => \"stop\", ... }");
+        return colour switch
+        {
+            "red" => "stop",
+            "amber" or "yellow" => "prepare",
+            "green" => "go",
+            _ => "?"
+        };
     }
 }

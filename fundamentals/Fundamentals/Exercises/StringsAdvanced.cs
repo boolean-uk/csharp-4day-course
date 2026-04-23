@@ -1,5 +1,7 @@
 namespace Fundamentals.Exercises;
 
+using System.Text;
+
 // Theme: Strings (advanced) — exercises for you to implement.
 // The teaching material (Lesson G: StringBuilder) is in Lessons/StringsAdvanced.cs.
 // Tackle this only after finishing the core Strings exercises.
@@ -33,6 +35,23 @@ public static class StringsAdvanced
     // You don't need to handle escaped quotes ("" inside a quoted field).
     public static string[] ParseCsvRow(string row)
     {
-        throw new NotImplementedException("TODO: walk the chars, track insideQuotes, build each field with StringBuilder");
+        List<string> fields = [];
+        bool insideQuotes = false;
+        var currentField = new StringBuilder();
+        foreach (char c in row)
+        {
+            if (c == '"')
+                insideQuotes = !insideQuotes;
+            else if (c == ',' && !insideQuotes)
+            {
+                fields.Add(currentField.ToString());
+                currentField.Clear();
+            }
+            else
+                currentField.Append(c);
+        }
+
+        fields.Add(currentField.ToString());
+        return fields.ToArray();
     }
 }
