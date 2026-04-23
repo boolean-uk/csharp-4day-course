@@ -1,3 +1,5 @@
+using Fundamentals.Lessons;
+
 namespace Fundamentals.Exercises;
 
 // Theme: Enums — exercises for you to implement.
@@ -27,7 +29,19 @@ public static class Enums
     // Hint: Lesson C in Enums.cs shows the exact shape.
     public static string Prompt(VendingMachineState state)
     {
-        throw new NotImplementedException("TODO: switch on state, return the matching prompt string");
+        switch (state)
+        {
+            case VendingMachineState.Idle:
+                return "Insert a coin";
+            case VendingMachineState.CoinInserted:
+                return "Select a product";
+            case VendingMachineState.Dispensing:
+                return "Please wait...";
+            case VendingMachineState.OutOfStock:
+                return "Sold out";
+            default:
+                throw new ArgumentOutOfRangeException(nameof(state));
+        }
     }
 
     // EXERCISE 2: CanAcceptCoin
@@ -39,7 +53,7 @@ public static class Enums
     // Hint: enum values compare with `==` — no switch needed for this one.
     public static bool CanAcceptCoin(VendingMachineState state)
     {
-        throw new NotImplementedException("TODO: true when state equals VendingMachineState.Idle");
+        return state == VendingMachineState.Idle;
     }
 
     // EXERCISE 3: ParseState
@@ -53,6 +67,6 @@ public static class Enums
     // Hint: Enum.TryParse<T>(text, ignoreCase: true, out state) does exactly this.
     public static bool ParseState(string text, out VendingMachineState state)
     {
-        throw new NotImplementedException("TODO: delegate to Enum.TryParse with ignoreCase: true");
+        return Enum.TryParse(text, ignoreCase: true, out state);
     }
 }
