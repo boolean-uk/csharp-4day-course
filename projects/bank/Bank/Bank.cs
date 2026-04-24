@@ -86,4 +86,12 @@ public class Bank
         fromAccount.Withdraw(amount, $"Transfer to {toAccountNumber}");
         toAccount.Deposit(amount, $"Transfer from {fromAccountNumber}");
     }
+
+    public void ApplyInterest(decimal rate)
+    {
+        foreach (Account account in accounts.Where(a => a.Balance > 0))
+        {
+            account.Deposit(account.Balance * rate, $"Interest {rate:P2}");
+        }
+    }
 }

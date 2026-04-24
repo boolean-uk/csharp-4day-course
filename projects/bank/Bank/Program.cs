@@ -69,6 +69,11 @@ Console.WriteLine(b.Statement());
 Console.WriteLine(c.Statement());
 Console.WriteLine(bank.TotalAssets);
 
+bank.ApplyInterest(0.05m);
+Console.WriteLine(a.Statement());
+Console.WriteLine(b.Statement());
+Console.WriteLine(c.Statement());
+
 // TODO (students): extend the demo. Ideas —
 //   • Try more edge cases — zero amounts, negative amounts — and catch the
 //     ArgumentException each one throws.

@@ -151,4 +151,27 @@ public class BankTests
         Account b = bank.OpenAccount("Alan", 200m);
         Assert.Throws<InvalidOperationException>(() => bank.Transfer(a.AccountNumber, b.AccountNumber, 150m));
     }
+
+    [Fact]
+    public void ApplyInterest_CreditsInterestToAccountsWithPositiveBalance()
+    {
+        Bank bank = new Bank("Acme");
+        Account a = bank.OpenAccount("Ada", 100m);
+        Account b = bank.OpenAccount("Alan", 200m);
+        bank.ApplyInterest(0.05m);
+        Assert.Equal(105m, a.Balance);
+        Assert.Equal(210m, b.Balance);
+    }
+
+    [Fact]
+    public void ApplyInterest_DoesNotCreditInterestToAccountsWithZeroOrNegativeBalance()
+    {
+        Bank bank = new Bank("Acme");
+        Account a = bank.OpenAccount("Ada", 0m);
+        Account b = bank.OpenAccount("Alan", 0m, 100m);
+        b.Withdraw(50m);
+        bank.ApplyInterest(0.05m);
+        Assert.Equal(0m, a.Balance);
+        Assert.Equal(-50m, b.Balance);
+    }
 }
