@@ -15,10 +15,10 @@ Account ada = bank.OpenAccount("Ada Lovelace", 1250.75m);
 Account alan = bank.OpenAccount("Alan Turing", 3410.00m);
 
 // A week of Ada's account activity — all amounts in decimals.
-ada.Deposit(89.99m);    // payday top-up
-ada.Withdraw(12.50m);   // lunch
-ada.Withdraw(47.33m);   // groceries
-ada.Deposit(500m);      // refund
+ada.Deposit(89.99m); // payday top-up
+ada.Withdraw(12.50m); // lunch
+ada.Withdraw(47.33m); // groceries
+ada.Deposit(500m); // refund
 
 // Alan's activity, including a big bill.
 alan.Withdraw(1299.99m);
@@ -53,6 +53,14 @@ foreach (Transaction t in ada.FindTransactions("deposit"))
 {
     Console.WriteLine($"  {t.Timestamp:yyyy-MM-dd HH:mm}   {t.Amount,10:N2}   {t.Description}");
 }
+
+Console.WriteLine();
+Console.WriteLine("TESTING");
+Account a = new Account("ACC-1000", "Ada", 100m);
+a.Deposit(50m);
+a.Withdraw(30m);
+string s = a.Statement();
+Console.WriteLine(s);
 
 // TODO (students): extend the demo. Ideas —
 //   • Try more edge cases — zero amounts, negative amounts — and catch the

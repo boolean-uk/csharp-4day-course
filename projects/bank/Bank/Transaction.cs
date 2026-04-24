@@ -24,6 +24,14 @@ public struct Transaction
 
     public Transaction(TransactionType type, decimal amount, string description)
     {
-        throw new NotImplementedException("TODO: throw ArgumentException if amount <= 0, then assign Type, Amount, Description, and set Timestamp = DateTime.UtcNow");
+        if (amount <= 0)
+        {
+            throw new ArgumentException("Amount must be greater than 0");
+        }
+
+        Type = type;
+        Amount = amount;
+        Timestamp = DateTime.UtcNow;
+        Description = description;
     }
 }

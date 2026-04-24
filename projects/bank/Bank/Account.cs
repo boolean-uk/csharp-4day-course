@@ -25,34 +25,76 @@ public class Account
 
     public Account(string accountNumber, string holder, decimal startingBalance)
     {
-        throw new NotImplementedException("TODO: throw ArgumentException if startingBalance < 0. Assign AccountNumber and Holder. Initialise transactions = new List<Transaction>(). If startingBalance > 0, append an opening Credit transaction with description \"Opening deposit\".");
+        if (startingBalance < 0)
+        {
+            throw new ArgumentException("Starting balance must be greater than 0");
+        }
+
+        AccountNumber = accountNumber;
+        Holder = holder;
+        transactions = new List<Transaction>();
+        if (startingBalance > 0)
+        {
+            transactions.Add(new Transaction(TransactionType.Credit, startingBalance, "Opening deposit"));
+        }
     }
 
     // Computed on every read — there's no stored balance field.
     public decimal Balance
     {
-        get { throw new NotImplementedException("TODO: iterate transactions, add Credit amounts, subtract Debit amounts, return the running total"); }
+        get
+        {
+            decimal total = 0;
+            foreach (Transaction transaction in transactions)
+            {
+                if (transaction.Type == TransactionType.Credit)
+                {
+                    total += transaction.Amount;
+                }
+                else if (transaction.Type == TransactionType.Debit)
+                {
+                    total -= transaction.Amount;
+                }
+            }
+
+            return total;
+        }
     }
 
     public int TransactionCount
     {
-        get { throw new NotImplementedException("TODO: return transactions.Count"); }
+        get { return transactions.Count; }
     }
 
     // Expose a read-only view — callers can enumerate but not Add/Remove.
     public IReadOnlyList<Transaction> Transactions
     {
-        get { throw new NotImplementedException("TODO: return transactions.AsReadOnly()"); }
+        get { return transactions.AsReadOnly(); }
     }
 
     public void Deposit(decimal amount)
     {
-        throw new NotImplementedException("TODO: throw ArgumentException if amount <= 0, then add a Credit transaction with description \"Deposit\"");
+        if (amount <= 0)
+        {
+            throw new ArgumentException("Amount must be greater than 0");
+        }
+
+        transactions.Add(new Transaction(TransactionType.Credit, amount, "Deposit"));
     }
 
     public void Withdraw(decimal amount)
     {
-        throw new NotImplementedException("TODO: throw ArgumentException if amount <= 0, throw InvalidOperationException if amount > Balance, otherwise add a Debit transaction with description \"Withdrawal\". On failure the transaction must NOT be recorded.");
+        if (amount <= 0)
+        {
+            throw new ArgumentException("Amount must be greater than 0");
+        }
+
+        if (amount > Balance)
+        {
+            throw new InvalidOperationException("Amount must be less than or equal to Balance");
+        }
+
+        transactions.Add(new Transaction(TransactionType.Debit, amount, "Withdrawal"));
     }
 
     // Returns a printable multi-line bank statement. Format is deliberately
@@ -60,13 +102,25 @@ public class Account
     // appear in the output, so you're free to make it pretty.
     public string Statement()
     {
-        throw new NotImplementedException("TODO: return a multi-line string — header with AccountNumber, Holder, and Balance; then a row per transaction showing timestamp, CREDIT/DEBIT, amount, and description. See the `decimal` and DateTime mini-lessons in README.md for formatting.");
+        StringBuilder sb = new StringBuilder();
+        sb.AppendLine($"Account Number: {AccountNumber}");
+        sb.AppendLine($"Holder: {Holder}");
+        sb.AppendLine($"Balance: {Balance:N2}");
+        sb.AppendLine("Transactions:");
+        foreach (Transaction transaction in transactions)
+        {
+            sb.AppendLine(
+                $"{transaction.Timestamp:yyyy-MM-dd HH:mm} {transaction.Type.ToString().ToUpper()} {transaction.Amount:N2} {transaction.Description}");
+        }
+
+        return sb.ToString();
     }
 
     // Case-insensitive substring match on Description.
     // Results are sorted oldest-first by Timestamp.
     public List<Transaction> FindTransactions(string search)
     {
-        throw new NotImplementedException("TODO: return every transaction whose Description contains `search` (case-insensitive), sorted by Timestamp oldest-first");
+        return transactions.Where(t => t.Description.Contains(search, StringComparison.OrdinalIgnoreCase))
+            .OrderBy(t => t.Timestamp).ToList();
     }
 }
