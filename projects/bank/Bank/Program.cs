@@ -70,6 +70,7 @@ Console.WriteLine(c.Statement());
 Console.WriteLine(bank.TotalAssets);
 
 bank.ApplyInterest(0.05m);
+
 Console.WriteLine(a.Statement());
 Console.WriteLine(b.Statement());
 Console.WriteLine(c.Statement());

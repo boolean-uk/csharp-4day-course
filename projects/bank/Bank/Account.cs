@@ -103,10 +103,7 @@ public class Account
         transactions.Add(new Transaction(TransactionType.Debit, amount, desc));
     }
 
-    // Returns a printable multi-line bank statement. Format is deliberately
-    // our own choice here — the tests only check that the required fields
-    // appear in the output, so you're free to make it pretty.
-    public string Statement()
+    private string BuildStatement(List<Transaction> includedTransactions)
     {
         StringBuilder sb = new StringBuilder();
         sb.AppendLine($"Account Number: {AccountNumber}");
@@ -114,13 +111,28 @@ public class Account
         sb.AppendLine($"Balance: {Balance:N2}");
         sb.AppendLine($"Overdraft Limit: {OverdraftLimit:N2}");
         sb.AppendLine("Transactions:");
-        foreach (Transaction transaction in transactions)
+        foreach (Transaction transaction in includedTransactions)
         {
             sb.AppendLine(
                 $"{transaction.Timestamp:yyyy-MM-dd HH:mm} {transaction.Type.ToString().ToUpper()} {transaction.Amount:N2} {transaction.Description}");
         }
 
         return sb.ToString();
+    }
+
+    // Returns a printable multi-line bank statement. Format is deliberately
+    // our own choice here — the tests only check that the required fields
+    // appear in the output, so you're free to make it pretty.
+    public string Statement()
+    {
+        return BuildStatement(transactions);
+    }
+
+    public string Statement(DateTime from, DateTime to)
+    {
+        List<Transaction> transactionsInRange =
+            transactions.Where(t => t.Timestamp >= from && t.Timestamp <= to).ToList();
+        return BuildStatement(transactionsInRange);
     }
 
     // Case-insensitive substring match on Description.

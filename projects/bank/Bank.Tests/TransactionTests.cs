@@ -28,8 +28,7 @@ public class TransactionTests
     [InlineData(-100.50)]
     public void Constructor_ThrowsOnNonPositiveAmount(decimal badAmount)
     {
-        Assert.Throws<ArgumentException>(
-            () => new Transaction(TransactionType.Credit, badAmount, "x"));
+        Assert.Throws<ArgumentException>(() => new Transaction(TransactionType.Credit, badAmount, "x"));
     }
 
     [Fact]

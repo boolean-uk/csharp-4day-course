@@ -35,8 +35,7 @@ public class AccountTests
     [Fact]
     public void Constructor_ThrowsOnNegativeStartingBalance()
     {
-        Assert.Throws<ArgumentException>(
-            () => new Account("ACC-1000", "Ada", -1m));
+        Assert.Throws<ArgumentException>(() => new Account("ACC-1000", "Ada", -1m));
     }
 
     // ── Balance ────────────────────────────────────────────────────
@@ -104,7 +103,14 @@ public class AccountTests
     public void Withdraw_DoesNotRecordTransactionWhenItFails()
     {
         Account a = new Account("ACC-1000", "Ada", 100m);
-        try { a.Withdraw(500m); } catch (InvalidOperationException) { }
+        try
+        {
+            a.Withdraw(500m);
+        }
+        catch (InvalidOperationException)
+        {
+        }
+
         Assert.Equal(1, a.TransactionCount); // only the opening deposit
         Assert.Equal(100m, a.Balance);
     }
@@ -216,5 +222,11 @@ public class AccountTests
         {
             Assert.True(matches[i - 1].Timestamp <= matches[i].Timestamp);
         }
+    }
+
+    [Fact]
+    public void Statement_ReturnsTransactionsInRange()
+    {
+        // TODO: Mock this somehow
     }
 }
