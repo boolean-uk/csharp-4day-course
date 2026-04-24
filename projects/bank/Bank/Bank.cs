@@ -63,4 +63,27 @@ public class Bank
 
         return false;
     }
+
+    public void Transfer(string fromAccountNumber, string toAccountNumber, decimal amount)
+    {
+        Account? fromAccount = FindAccount(fromAccountNumber);
+        if (fromAccount == null)
+        {
+            throw new InvalidOperationException("From account not found");
+        }
+
+        Account? toAccount = FindAccount(toAccountNumber);
+        if (toAccount == null)
+        {
+            throw new InvalidOperationException("To account not found");
+        }
+
+        if (fromAccount.Balance < amount)
+        {
+            throw new InvalidOperationException($"Insufficient funds in {fromAccountNumber}");
+        }
+
+        fromAccount.Withdraw(amount, $"Transfer to {toAccountNumber}");
+        toAccount.Deposit(amount, $"Transfer from {fromAccountNumber}");
+    }
 }

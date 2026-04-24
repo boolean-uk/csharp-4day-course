@@ -51,7 +51,7 @@ public class BankTests
         b.OpenAccount("Ada", 100m);
         b.OpenAccount("Alan", 250m);
         Account grace = b.OpenAccount("Grace", 500m);
-        grace.Withdraw(50m);   // Grace now 450
+        grace.Withdraw(50m); // Grace now 450
         Assert.Equal(800m, b.TotalAssets); // 100 + 250 + 450
     }
 
@@ -114,5 +114,41 @@ public class BankTests
         Account c = two.OpenAccount("Alan", 200m);
         Assert.Equal("ACC-1000", a.AccountNumber);
         Assert.Equal("ACC-1000", c.AccountNumber);
+    }
+
+    [Fact]
+    public void Transfer_TransfersFundsBetweenAccounts()
+    {
+        Bank bank = new Bank("Acme");
+        Account a = bank.OpenAccount("Ada", 100m);
+        Account b = bank.OpenAccount("Alan", 200m);
+        bank.Transfer(a.AccountNumber, b.AccountNumber, 50m);
+        Assert.Equal(50m, a.Balance);
+        Assert.Equal(250m, b.Balance);
+    }
+
+    [Fact]
+    public void Transfer_ThrowsWhenFromAccountNotFound()
+    {
+        Bank bank = new Bank("Acme");
+        Account b = bank.OpenAccount("Alan", 200m);
+        Assert.Throws<InvalidOperationException>(() => bank.Transfer("ACC-9999", b.AccountNumber, 50m));
+    }
+
+    [Fact]
+    public void Transfer_ThrowsWhenToAccountNotFound()
+    {
+        Bank bank = new Bank("Acme");
+        Account a = bank.OpenAccount("Ada", 100m);
+        Assert.Throws<InvalidOperationException>(() => bank.Transfer(a.AccountNumber, "ACC-9999", 50m));
+    }
+
+    [Fact]
+    public void Transfer_ThrowsWhenInsufficientFunds()
+    {
+        Bank bank = new Bank("Acme");
+        Account a = bank.OpenAccount("Ada", 100m);
+        Account b = bank.OpenAccount("Alan", 200m);
+        Assert.Throws<InvalidOperationException>(() => bank.Transfer(a.AccountNumber, b.AccountNumber, 150m));
     }
 }

@@ -56,11 +56,14 @@ foreach (Transaction t in ada.FindTransactions("deposit"))
 
 Console.WriteLine();
 Console.WriteLine("TESTING");
-Account a = new Account("ACC-1000", "Ada", 100m);
+Account a = bank.OpenAccount("Ada Lovelace", 200m);
+Account b = bank.OpenAccount("Alan Turing", 200m);
 a.Deposit(50m);
-a.Withdraw(30m);
-string s = a.Statement();
-Console.WriteLine(s);
+a.Withdraw(20m);
+b.Deposit(20m);
+bank.Transfer(a.AccountNumber, b.AccountNumber, 50m);
+Console.WriteLine(a.Statement());
+Console.WriteLine(b.Statement());
 
 // TODO (students): extend the demo. Ideas —
 //   • Try more edge cases — zero amounts, negative amounts — and catch the

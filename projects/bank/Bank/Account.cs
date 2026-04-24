@@ -72,17 +72,17 @@ public class Account
         get { return transactions.AsReadOnly(); }
     }
 
-    public void Deposit(decimal amount)
+    public void Deposit(decimal amount, string description = "Deposit")
     {
         if (amount <= 0)
         {
             throw new ArgumentException("Amount must be greater than 0");
         }
 
-        transactions.Add(new Transaction(TransactionType.Credit, amount, "Deposit"));
+        transactions.Add(new Transaction(TransactionType.Credit, amount, description));
     }
 
-    public void Withdraw(decimal amount)
+    public void Withdraw(decimal amount, string description = "Withdrawal")
     {
         if (amount <= 0)
         {
@@ -94,7 +94,7 @@ public class Account
             throw new InvalidOperationException("Amount must be less than or equal to Balance");
         }
 
-        transactions.Add(new Transaction(TransactionType.Debit, amount, "Withdrawal"));
+        transactions.Add(new Transaction(TransactionType.Debit, amount, description));
     }
 
     // Returns a printable multi-line bank statement. Format is deliberately
