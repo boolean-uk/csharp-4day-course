@@ -36,11 +36,11 @@ public class Bank
         get { return accounts.AsReadOnly(); }
     }
 
-    public Account OpenAccount(string holder, decimal startingBalance)
+    public Account OpenAccount(string holder, decimal startingBalance, decimal overdraftLimit = 0m)
     {
         string accountNumber = $"ACC-{nextAccountNumber}";
         nextAccountNumber++;
-        Account account = new Account(accountNumber, holder, startingBalance);
+        Account account = new Account(accountNumber, holder, startingBalance, overdraftLimit);
         accounts.Add(account);
         return account;
     }

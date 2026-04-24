@@ -22,8 +22,9 @@ public class Account
 
     public string AccountNumber { get; }
     public string Holder { get; }
+    public decimal OverdraftLimit { get; }
 
-    public Account(string accountNumber, string holder, decimal startingBalance)
+    public Account(string accountNumber, string holder, decimal startingBalance, decimal overdraftLimit = 0m)
     {
         if (startingBalance < 0)
         {
@@ -33,6 +34,7 @@ public class Account
         AccountNumber = accountNumber;
         Holder = holder;
         transactions = new List<Transaction>();
+        OverdraftLimit = overdraftLimit;
         if (startingBalance > 0)
         {
             transactions.Add(new Transaction(TransactionType.Credit, startingBalance, "Opening deposit"));
@@ -79,7 +81,9 @@ public class Account
             throw new ArgumentException("Amount must be greater than 0");
         }
 
-        transactions.Add(new Transaction(TransactionType.Credit, amount, description));
+        decimal newBalance = Balance + amount;
+        string desc = description + $" (New Balance: {newBalance:N2})";
+        transactions.Add(new Transaction(TransactionType.Credit, amount, desc));
     }
 
     public void Withdraw(decimal amount, string description = "Withdrawal")
@@ -89,12 +93,14 @@ public class Account
             throw new ArgumentException("Amount must be greater than 0");
         }
 
-        if (amount > Balance)
+        if (amount > Balance + OverdraftLimit)
         {
             throw new InvalidOperationException("Amount must be less than or equal to Balance");
         }
 
-        transactions.Add(new Transaction(TransactionType.Debit, amount, description));
+        decimal newBalance = Balance - amount;
+        string desc = description + $" (New Balance: {newBalance:N2})";
+        transactions.Add(new Transaction(TransactionType.Debit, amount, desc));
     }
 
     // Returns a printable multi-line bank statement. Format is deliberately
@@ -106,6 +112,7 @@ public class Account
         sb.AppendLine($"Account Number: {AccountNumber}");
         sb.AppendLine($"Holder: {Holder}");
         sb.AppendLine($"Balance: {Balance:N2}");
+        sb.AppendLine($"Overdraft Limit: {OverdraftLimit:N2}");
         sb.AppendLine("Transactions:");
         foreach (Transaction transaction in transactions)
         {

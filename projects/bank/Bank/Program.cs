@@ -58,12 +58,16 @@ Console.WriteLine();
 Console.WriteLine("TESTING");
 Account a = bank.OpenAccount("Ada Lovelace", 200m);
 Account b = bank.OpenAccount("Alan Turing", 200m);
+Account c = bank.OpenAccount("Bob Smith", 0m, 100m);
+c.Withdraw(50m);
 a.Deposit(50m);
 a.Withdraw(20m);
 b.Deposit(20m);
 bank.Transfer(a.AccountNumber, b.AccountNumber, 50m);
 Console.WriteLine(a.Statement());
 Console.WriteLine(b.Statement());
+Console.WriteLine(c.Statement());
+Console.WriteLine(bank.TotalAssets);
 
 // TODO (students): extend the demo. Ideas —
 //   • Try more edge cases — zero amounts, negative amounts — and catch the
