@@ -68,15 +68,15 @@ public class Bank
             throw new InvalidOperationException($"Insufficient funds in {fromAccountNumber}");
         }
 
-        fromAccount.Withdraw(amount, $"Transfer to {toAccountNumber}");
-        toAccount.Deposit(amount, $"Transfer from {fromAccountNumber}");
+        fromAccount.Withdraw(amount, TransactionCategory.Transfer, $"Transfer to {toAccountNumber}");
+        toAccount.Deposit(amount, TransactionCategory.Transfer, $"Transfer from {fromAccountNumber}");
     }
 
     public void ApplyInterest(decimal rate)
     {
         foreach (Account account in _accounts.Where(a => a.Balance > 0))
         {
-            account.Deposit(account.Balance * rate, $"Interest {rate:P2}");
+            account.Deposit(account.Balance * rate, TransactionCategory.Interest, $"Interest {rate:P2}");
         }
     }
 }

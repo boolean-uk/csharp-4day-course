@@ -23,7 +23,8 @@ public class Account
         OverdraftLimit = overdraftLimit;
         if (startingBalance > 0)
         {
-            _transactions.Add(new Transaction(TransactionType.Credit, startingBalance, "Opening deposit"));
+            _transactions.Add(new Transaction(TransactionType.Credit, startingBalance, TransactionCategory.Other,
+                "Opening deposit"));
         }
     }
 
@@ -52,12 +53,14 @@ public class Account
 
     public IReadOnlyList<Transaction> Transactions => _transactions.AsReadOnly();
 
-    public void Deposit(decimal amount, string description = "Deposit")
+    public void Deposit(decimal amount, TransactionCategory category = TransactionCategory.Other,
+        string description = "Deposit")
     {
-        Deposit(amount, DateTime.UtcNow, description);
+        Deposit(amount, DateTime.UtcNow, category, description);
     }
 
-    public void Deposit(decimal amount, DateTime timestamp, string description = "Deposit")
+    public void Deposit(decimal amount, DateTime timestamp, TransactionCategory category = TransactionCategory.Other,
+        string description = "Deposit")
     {
         if (amount <= 0)
         {
@@ -66,15 +69,17 @@ public class Account
 
         decimal newBalance = Balance + amount;
         string desc = description + $" (New Balance: {newBalance:N2})";
-        _transactions.Add(new Transaction(TransactionType.Credit, amount, timestamp, desc));
+        _transactions.Add(new Transaction(TransactionType.Credit, amount, category, timestamp, desc));
     }
 
-    public void Withdraw(decimal amount, string description = "Withdrawal")
+    public void Withdraw(decimal amount, TransactionCategory category = TransactionCategory.Other,
+        string description = "Withdrawal")
     {
-        Withdraw(amount, DateTime.UtcNow, description);
+        Withdraw(amount, DateTime.UtcNow, category, description);
     }
 
-    public void Withdraw(decimal amount, DateTime timestamp, string description = "Withdrawal")
+    public void Withdraw(decimal amount, DateTime timestamp, TransactionCategory category = TransactionCategory.Other,
+        string description = "Withdrawal")
     {
         if (amount <= 0)
         {
@@ -88,7 +93,7 @@ public class Account
 
         decimal newBalance = Balance - amount;
         string desc = description + $" (New Balance: {newBalance:N2})";
-        _transactions.Add(new Transaction(TransactionType.Debit, amount, timestamp, desc));
+        _transactions.Add(new Transaction(TransactionType.Debit, amount, category, timestamp, desc));
     }
 
     private string BuildStatement(List<Transaction> includedTransactions)
@@ -124,5 +129,10 @@ public class Account
     {
         return _transactions.Where(t => t.Description.Contains(search, StringComparison.OrdinalIgnoreCase))
             .OrderBy(t => t.Timestamp).ToList();
+    }
+
+    public List<Transaction> FindTransactions(TransactionCategory category)
+    {
+        return _transactions.Where(t => t.Category == category).ToList();
     }
 }

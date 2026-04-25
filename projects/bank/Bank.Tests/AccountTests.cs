@@ -225,6 +225,7 @@ public class AccountTests
         }
     }
 
+
     [Fact]
     public void Statement_ReturnsTransactionsInRange()
     {
@@ -232,10 +233,12 @@ public class AccountTests
         DateTime from = new DateTime(2026, 1, 10, 0, 0, 0, DateTimeKind.Utc);
         DateTime to = new DateTime(2026, 1, 15, 23, 59, 59, DateTimeKind.Utc);
 
-        a.Deposit(25m, new DateTime(2026, 1, 5, 9, 0, 0, DateTimeKind.Utc), "Too early");
-        a.Deposit(50m, new DateTime(2026, 1, 10, 12, 0, 0, DateTimeKind.Utc), "In range deposit");
-        a.Withdraw(20m, new DateTime(2026, 1, 15, 18, 30, 0, DateTimeKind.Utc), "In range withdrawal");
-        a.Deposit(10m, new DateTime(2026, 1, 20, 9, 0, 0, DateTimeKind.Utc), "Too late");
+        a.Deposit(25m, new DateTime(2026, 1, 5, 9, 0, 0, DateTimeKind.Utc), TransactionCategory.Other, "Too early");
+        a.Deposit(50m, new DateTime(2026, 1, 10, 12, 0, 0, DateTimeKind.Utc), TransactionCategory.Other,
+            "In range deposit");
+        a.Withdraw(20m, new DateTime(2026, 1, 15, 18, 30, 0, DateTimeKind.Utc), TransactionCategory.Other,
+            "In range withdrawal");
+        a.Deposit(10m, new DateTime(2026, 1, 20, 9, 0, 0, DateTimeKind.Utc), TransactionCategory.Other, "Too late");
 
         string s = a.Statement(from, to);
 
