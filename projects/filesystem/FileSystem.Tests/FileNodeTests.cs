@@ -115,4 +115,14 @@ public class FileNodeTests
         FileNode f = new FileNode("readme.md", 100);
         Assert.Equal(0, f.Depth());
     }
+
+    [Fact]
+    public void PrettyPrint_PrintsFile()
+    {
+        FileNode f = new FileNode("readme.md", 100);
+        StringWriter sw = new StringWriter();
+        Console.SetOut(sw);
+        f.PrettyPrint();
+        Assert.Equal("readme.md", sw.ToString().Trim());
+    }
 }

@@ -66,4 +66,17 @@ public class FileNode : FSNode, ISearchable
     {
         return 0;
     }
+
+    public override void PrettyPrint(string? prefix = null, bool isLast = true)
+    {
+        bool isRoot = prefix is null;
+
+        if (isRoot)
+        {
+            Console.WriteLine(Name);
+            return;
+        }
+
+        Console.WriteLine(prefix + (isLast ? "└── " : "├── ") + Name);
+    }
 }

@@ -48,4 +48,6 @@ public abstract class FSNode
     public abstract Dictionary<string, int> CountByExtension();
 
     public abstract int Depth();
+
+    public abstract void PrettyPrint(string? prefix = null, bool isLast = true);
 }

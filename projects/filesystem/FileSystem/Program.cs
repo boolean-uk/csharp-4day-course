@@ -74,3 +74,7 @@ catch (ArgumentException ex)
 //   • Build a much deeper tree and check Size / FileCount stay correct.
 //   • After implementing the pretty-print exercise, swap the call to
 //     root.Print() above for root.PrettyPrint() to see the difference.
+
+Console.WriteLine("=== PRETTY PRINT ===");
+root.PrettyPrint();
+

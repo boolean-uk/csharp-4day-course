@@ -250,4 +250,40 @@ public class DirectoryNodeTests
         DirectoryNode d = new DirectoryNode("d");
         Assert.Equal(0, d.Depth());
     }
+
+    [Fact]
+    public void PrettyPrint_PrintsDirectory()
+    {
+        DirectoryNode d = new DirectoryNode("d");
+        FileNode a = new FileNode("a.txt", 1);
+        FileNode b = new FileNode("b.md", 2);
+        FileNode c = new FileNode("c.txt", 3);
+        d.Add(a);
+        d.Add(b);
+        d.Add(c);
+
+        StringWriter sw = new StringWriter();
+        Console.SetOut(sw);
+        d.PrettyPrint();
+        Assert.Equal("d/\r\n├── a.txt\r\n├── b.md\r\n└── c.txt", sw.ToString().Trim());
+    }
+
+    [Fact]
+    public void PrettyPrint_PrintsNestedDirectory()
+    {
+        DirectoryNode d = new DirectoryNode("d");
+        DirectoryNode d2 = new DirectoryNode("d2");
+        d.Add(d2);
+        FileNode a = new FileNode("a.txt", 1);
+        FileNode b = new FileNode("b.md", 2);
+        FileNode c = new FileNode("c.txt", 3);
+        d2.Add(a);
+        d2.Add(b);
+        d2.Add(c);
+
+        StringWriter sw = new StringWriter();
+        Console.SetOut(sw);
+        d.PrettyPrint();
+        Assert.Equal("d/\r\n└── d2/\r\n\t├── a.txt\r\n\t├── b.md\r\n\t└── c.txt", sw.ToString().Trim());
+    }
 }

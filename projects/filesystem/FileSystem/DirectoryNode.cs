@@ -128,4 +128,26 @@ public class DirectoryNode : FSNode, ISearchable
         if (children.Count == 0) return 0;
         return 1 + children.Max(child => child.Depth());
     }
+
+    public override void PrettyPrint(string? prefix = null, bool isLast = true)
+    {
+        bool isRoot = prefix is null;
+
+        if (isRoot)
+        {
+            Console.WriteLine(Name + "/");
+        }
+        else
+        {
+            Console.WriteLine(prefix + (isLast ? "└── " : "├── ") + Name + "/");
+        }
+
+        string childPrefix = isRoot ? string.Empty : prefix + (isLast ? "\t" : "│   ");
+
+        for (int i = 0; i < children.Count; i++)
+        {
+            bool childIsLast = i == children.Count - 1;
+            children[i].PrettyPrint(childPrefix, childIsLast);
+        }
+    }
 }
