@@ -77,6 +77,7 @@ String formatting:
 - polymorphism: overriding parent methods
 - abstract class: cannot create object of class, must be inherited (incomplete implementation)
 - interface: describing functionality, e.g. ISearchable, IEnumerable
+- Dictionary<string, int> = Map
 
 **Enums**
 

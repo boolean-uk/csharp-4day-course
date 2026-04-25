@@ -108,4 +108,18 @@ public class DirectoryNode : FSNode, ISearchable
 
         return result;
     }
+
+    public override Dictionary<string, int> CountByExtension()
+    {
+        Dictionary<string, int> result = [];
+        foreach (FSNode child in children)
+        {
+            foreach (var (key, value) in child.CountByExtension())
+            {
+                result[key] = result.TryGetValue(key, out int count) ? count + value : value;
+            }
+        }
+
+        return result;
+    }
 }

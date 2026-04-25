@@ -56,4 +56,9 @@ public class FileNode : FSNode, ISearchable
             ? [this]
             : new List<FileNode>();
     }
+
+    public override Dictionary<string, int> CountByExtension()
+    {
+        return new Dictionary<string, int> { { Path.GetExtension(Name).ToLowerInvariant(), 1 } };
+    }
 }

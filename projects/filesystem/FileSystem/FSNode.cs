@@ -44,4 +44,6 @@ public abstract class FSNode
     public abstract FileNode? LargestFile();
 
     public abstract List<FileNode> FilterByExtension(string ext);
+
+    public abstract Dictionary<string, int> CountByExtension();
 }

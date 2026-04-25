@@ -87,4 +87,25 @@ public class FileNodeTests
         FileNode f = new FileNode("readme.md", 100);
         Assert.Equal([f], f.FilterByExtension(".md"));
     }
+
+    [Fact]
+    public void FilterByExtension_IsCaseInsensitive()
+    {
+        FileNode f = new FileNode("README.MD", 100);
+        Assert.Equal([f], f.FilterByExtension(".md"));
+    }
+
+    [Fact]
+    public void CountByExtension_ReturnsOneForExtension()
+    {
+        FileNode f = new FileNode("readme.md", 100);
+        Assert.Equal(new Dictionary<string, int> { { ".md", 1 } }, f.CountByExtension());
+    }
+
+    [Fact]
+    public void CountByExtension_IsCaseInsensitive()
+    {
+        FileNode f = new FileNode("README.MD", 100);
+        Assert.Equal(new Dictionary<string, int> { { ".md", 1 } }, f.CountByExtension());
+    }
 }

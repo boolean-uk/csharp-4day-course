@@ -169,4 +169,51 @@ public class DirectoryNodeTests
         Assert.Equal([a, c], d.FilterByExtension(".txt"));
         Assert.Equal([], d.FilterByExtension(".cs"));
     }
+
+    [Fact]
+    public void FilterByExtension_ReturnsFilesWithMatchingExtensionInNestedDirectories()
+    {
+        DirectoryNode d = new DirectoryNode("d");
+        DirectoryNode d2 = new DirectoryNode("d2");
+        d.Add(d2);
+        FileNode a = new FileNode("a.txt", 1);
+        FileNode b = new FileNode("b.md", 2);
+        FileNode c = new FileNode("c.txt", 3);
+        d2.Add(a);
+        d2.Add(b);
+        d2.Add(c);
+
+        Assert.Equal([a, c], d.FilterByExtension(".txt"));
+        Assert.Equal([b], d.FilterByExtension(".md"));
+    }
+
+    [Fact]
+    public void CountByExtension_ReturnsCountsForExtensions()
+    {
+        DirectoryNode d = new DirectoryNode("d");
+        FileNode a = new FileNode("a.txt", 1);
+        FileNode b = new FileNode("b.md", 2);
+        FileNode c = new FileNode("c.txt", 3);
+        d.Add(a);
+        d.Add(b);
+        d.Add(c);
+
+        Assert.Equal(new Dictionary<string, int> { { ".txt", 2 }, { ".md", 1 } }, d.CountByExtension());
+    }
+
+    [Fact]
+    public void CountByExtension_ReturnsCountsForExtensionsInNestedDirectories()
+    {
+        DirectoryNode d = new DirectoryNode("d");
+        DirectoryNode d2 = new DirectoryNode("d2");
+        d.Add(d2);
+        FileNode a = new FileNode("a.txt", 1);
+        FileNode b = new FileNode("b.md", 2);
+        FileNode c = new FileNode("c.txt", 3);
+        d2.Add(a);
+        d2.Add(b);
+        d2.Add(c);
+
+        Assert.Equal(new Dictionary<string, int> { { ".txt", 2 }, { ".md", 1 } }, d.CountByExtension());
+    }
 }
