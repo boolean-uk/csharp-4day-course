@@ -153,4 +153,20 @@ public class DirectoryNodeTests
 
         Assert.Equal(c, d.LargestFile());
     }
+
+    [Fact]
+    public void FilterByExtension_ReturnsFilesWithMatchingExtension()
+    {
+        DirectoryNode d = new DirectoryNode("d");
+        FileNode a = new FileNode("a.txt", 1);
+        FileNode b = new FileNode("b.md", 2);
+        FileNode c = new FileNode("c.txt", 3);
+        d.Add(a);
+        d.Add(b);
+        d.Add(c);
+
+        Assert.Equal([b], d.FilterByExtension(".md"));
+        Assert.Equal([a, c], d.FilterByExtension(".txt"));
+        Assert.Equal([], d.FilterByExtension(".cs"));
+    }
 }

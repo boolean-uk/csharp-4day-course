@@ -80,4 +80,11 @@ public class FileNodeTests
         FileNode f = new FileNode("readme.md", 100);
         Assert.Same(f, f.LargestFile());
     }
+
+    [Fact]
+    public void FilterByExtension_ReturnsSelfWhenMatching()
+    {
+        FileNode f = new FileNode("readme.md", 100);
+        Assert.Equal([f], f.FilterByExtension(".md"));
+    }
 }

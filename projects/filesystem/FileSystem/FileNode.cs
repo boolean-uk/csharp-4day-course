@@ -49,4 +49,11 @@ public class FileNode : FSNode, ISearchable
     {
         return this;
     }
+
+    public override List<FileNode> FilterByExtension(string ext)
+    {
+        return Name.EndsWith(ext, StringComparison.OrdinalIgnoreCase)
+            ? [this]
+            : new List<FileNode>();
+    }
 }

@@ -97,4 +97,15 @@ public class DirectoryNode : FSNode, ISearchable
 
         return largest;
     }
+
+    public override List<FileNode> FilterByExtension(string ext)
+    {
+        List<FileNode> result = [];
+        foreach (FSNode child in children)
+        {
+            result.AddRange(child.FilterByExtension(ext));
+        }
+
+        return result;
+    }
 }

@@ -42,4 +42,6 @@ public abstract class FSNode
     public abstract void Print(int indent = 0);
 
     public abstract FileNode? LargestFile();
+
+    public abstract List<FileNode> FilterByExtension(string ext);
 }
