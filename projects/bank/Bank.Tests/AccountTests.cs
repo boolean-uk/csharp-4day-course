@@ -1,5 +1,3 @@
-using BankApp;
-
 namespace BankApp.Tests;
 
 public class AccountTests
@@ -130,6 +128,7 @@ public class AccountTests
     public void Transactions_IsReadOnlyView()
     {
         Account a = new Account("ACC-1000", "Ada", 100m);
+
         // The returned collection is IReadOnlyList — there is no Add method,
         // so callers cannot bypass Deposit / Withdraw to mutate history.
         Assert.IsAssignableFrom<IReadOnlyList<Transaction>>(a.Transactions);
@@ -180,6 +179,7 @@ public class AccountTests
         a.Deposit(50m);
         a.Withdraw(30m);
         a.Deposit(20m);
+
         // "Deposit" should match both "Opening deposit" (case-insensitive)
         // and the two "Deposit" entries.
         List<Transaction> matches = a.FindTransactions("deposit");
@@ -210,10 +210,11 @@ public class AccountTests
     public void FindTransactions_ReturnsResultsSortedByTimestampOldestFirst()
     {
         Account a = new Account("ACC-1000", "Ada", 100m);
+
         // Small sleeps ensure distinct timestamps so the sort is verifiable.
-        System.Threading.Thread.Sleep(15);
+        Thread.Sleep(15);
         a.Deposit(50m);
-        System.Threading.Thread.Sleep(15);
+        Thread.Sleep(15);
         a.Deposit(20m);
 
         List<Transaction> matches = a.FindTransactions("deposit");
@@ -227,6 +228,20 @@ public class AccountTests
     [Fact]
     public void Statement_ReturnsTransactionsInRange()
     {
-        // TODO: Mock this somehow
+        Account a = new Account("ACC-1000", "Ada", 0m);
+        DateTime from = new DateTime(2026, 1, 10, 0, 0, 0, DateTimeKind.Utc);
+        DateTime to = new DateTime(2026, 1, 15, 23, 59, 59, DateTimeKind.Utc);
+
+        a.Deposit(25m, new DateTime(2026, 1, 5, 9, 0, 0, DateTimeKind.Utc), "Too early");
+        a.Deposit(50m, new DateTime(2026, 1, 10, 12, 0, 0, DateTimeKind.Utc), "In range deposit");
+        a.Withdraw(20m, new DateTime(2026, 1, 15, 18, 30, 0, DateTimeKind.Utc), "In range withdrawal");
+        a.Deposit(10m, new DateTime(2026, 1, 20, 9, 0, 0, DateTimeKind.Utc), "Too late");
+
+        string s = a.Statement(from, to);
+
+        Assert.Contains("In range deposit", s);
+        Assert.Contains("In range withdrawal", s);
+        Assert.DoesNotContain("Too early", s);
+        Assert.DoesNotContain("Too late", s);
     }
 }

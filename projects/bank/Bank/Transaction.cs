@@ -23,6 +23,11 @@ public struct Transaction
     public string Description { get; }
 
     public Transaction(TransactionType type, decimal amount, string description)
+        : this(type, amount, DateTime.UtcNow, description)
+    {
+    }
+
+    public Transaction(TransactionType type, decimal amount, DateTime timestamp, string description)
     {
         if (amount <= 0)
         {
@@ -31,7 +36,7 @@ public struct Transaction
 
         Type = type;
         Amount = amount;
-        Timestamp = DateTime.UtcNow;
+        Timestamp = timestamp;
         Description = description;
     }
 }

@@ -76,6 +76,11 @@ public class Account
 
     public void Deposit(decimal amount, string description = "Deposit")
     {
+        Deposit(amount, DateTime.UtcNow, description);
+    }
+
+    public void Deposit(decimal amount, DateTime timestamp, string description = "Deposit")
+    {
         if (amount <= 0)
         {
             throw new ArgumentException("Amount must be greater than 0");
@@ -83,10 +88,15 @@ public class Account
 
         decimal newBalance = Balance + amount;
         string desc = description + $" (New Balance: {newBalance:N2})";
-        transactions.Add(new Transaction(TransactionType.Credit, amount, desc));
+        transactions.Add(new Transaction(TransactionType.Credit, amount, timestamp, desc));
     }
 
     public void Withdraw(decimal amount, string description = "Withdrawal")
+    {
+        Withdraw(amount, DateTime.UtcNow, description);
+    }
+
+    public void Withdraw(decimal amount, DateTime timestamp, string description = "Withdrawal")
     {
         if (amount <= 0)
         {
@@ -100,7 +110,7 @@ public class Account
 
         decimal newBalance = Balance - amount;
         string desc = description + $" (New Balance: {newBalance:N2})";
-        transactions.Add(new Transaction(TransactionType.Debit, amount, desc));
+        transactions.Add(new Transaction(TransactionType.Debit, amount, timestamp, desc));
     }
 
     private string BuildStatement(List<Transaction> includedTransactions)
