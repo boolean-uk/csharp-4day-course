@@ -46,4 +46,6 @@ public abstract class FSNode
     public abstract List<FileNode> FilterByExtension(string ext);
 
     public abstract Dictionary<string, int> CountByExtension();
+
+    public abstract int Depth();
 }

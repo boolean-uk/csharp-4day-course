@@ -216,4 +216,38 @@ public class DirectoryNodeTests
 
         Assert.Equal(new Dictionary<string, int> { { ".txt", 2 }, { ".md", 1 } }, d.CountByExtension());
     }
+
+    [Fact]
+    public void Depth_ReturnsDepthOfDirectory()
+    {
+        DirectoryNode d = new DirectoryNode("d");
+        FileNode a = new FileNode("a.txt", 1);
+        FileNode b = new FileNode("b.md", 2);
+        FileNode c = new FileNode("c.txt", 3);
+        d.Add(a);
+        d.Add(b);
+        d.Add(c);
+
+        Assert.Equal(1, d.Depth());
+    }
+
+    [Fact]
+    public void Depth_ReturnsDepthOfNestedDirectories()
+    {
+        DirectoryNode d = new DirectoryNode("d");
+        DirectoryNode d2 = new DirectoryNode("d2");
+        DirectoryNode d3 = new DirectoryNode("d3");
+        d.Add(d2);
+        d2.Add(d3);
+        Assert.Equal(2, d.Depth());
+        Assert.Equal(1, d2.Depth());
+        Assert.Equal(0, d3.Depth());
+    }
+
+    [Fact]
+    public void Depth_ReturnsDepthOfEmptyDirectory()
+    {
+        DirectoryNode d = new DirectoryNode("d");
+        Assert.Equal(0, d.Depth());
+    }
 }

@@ -122,4 +122,10 @@ public class DirectoryNode : FSNode, ISearchable
 
         return result;
     }
+
+    public override int Depth()
+    {
+        if (children.Count == 0) return 0;
+        return 1 + children.Max(child => child.Depth());
+    }
 }

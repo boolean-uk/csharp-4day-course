@@ -61,4 +61,9 @@ public class FileNode : FSNode, ISearchable
     {
         return new Dictionary<string, int> { { Path.GetExtension(Name).ToLowerInvariant(), 1 } };
     }
+
+    public override int Depth()
+    {
+        return 0;
+    }
 }

@@ -108,4 +108,11 @@ public class FileNodeTests
         FileNode f = new FileNode("README.MD", 100);
         Assert.Equal(new Dictionary<string, int> { { ".md", 1 } }, f.CountByExtension());
     }
+
+    [Fact]
+    public void Depth_ReturnsZero()
+    {
+        FileNode f = new FileNode("readme.md", 100);
+        Assert.Equal(0, f.Depth());
+    }
 }
