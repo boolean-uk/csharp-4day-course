@@ -4,7 +4,7 @@ namespace BankApp;
 
 public class Account
 {
-    private readonly List<Transaction> _transactions;
+    private readonly Ledger<Transaction> _transactions;
     private decimal AvailableBalance => Balance + OverdraftLimit;
 
     public string AccountNumber { get; }
@@ -20,7 +20,7 @@ public class Account
 
         AccountNumber = accountNumber;
         Holder = holder;
-        _transactions = new List<Transaction>();
+        _transactions = new Ledger<Transaction>();
         OverdraftLimit = overdraftLimit;
         if (startingBalance > 0)
         {
@@ -52,7 +52,7 @@ public class Account
 
     public int TransactionCount => _transactions.Count;
 
-    public IReadOnlyList<Transaction> Transactions => _transactions.AsReadOnly();
+    public IReadOnlyList<Transaction> Transactions => _transactions.Entries;
 
     public void Deposit(decimal amount, TransactionCategory category = TransactionCategory.Other,
         string description = "Deposit")
@@ -97,7 +97,7 @@ public class Account
         _transactions.Add(new Transaction(TransactionType.Debit, amount, category, timestamp, desc));
     }
 
-    private string BuildStatement(List<Transaction> includedTransactions)
+    private string BuildStatement(IEnumerable<Transaction> includedTransactions)
     {
         StringBuilder sb = new StringBuilder();
         sb.AppendLine($"Account Number: {AccountNumber}");
