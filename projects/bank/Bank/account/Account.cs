@@ -1,6 +1,4 @@
-using System.Text;
-
-namespace BankApp;
+namespace BankApp.account;
 
 public class Account
 {

@@ -1,5 +1,3 @@
-using BankApp;
-
 Bank bank = new Bank("Acme Savings");
 Account a = bank.OpenSavingsAccount("Ada Lovelace", 200m);
 Account b = bank.OpenSavingsAccount("Alan Turing", 200m);

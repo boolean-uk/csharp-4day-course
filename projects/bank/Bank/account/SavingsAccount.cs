@@ -1,4 +1,4 @@
-namespace BankApp;
+namespace BankApp.account;
 
 public class SavingsAccount : Account
 {

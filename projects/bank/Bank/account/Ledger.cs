@@ -1,6 +1,6 @@
 using System.Collections;
 
-namespace BankApp;
+namespace BankApp.account;
 
 public class Ledger<T> : IEnumerable<T>
 {

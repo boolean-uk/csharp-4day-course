@@ -1,4 +1,4 @@
-namespace BankApp;
+namespace BankApp.transaction;
 
 public enum TransactionType
 {
