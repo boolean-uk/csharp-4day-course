@@ -75,6 +75,8 @@ String formatting:
 - use structs for small data, e.g. coordinates, money, date ranges
   - use classes when data gets more complex than that
 - polymorphism: overriding parent methods
+- abstract class: cannot create object of class, must be inherited (incomplete implementation)
+- interface: describing functionality, e.g. ISearchable, IEnumerable
 
 **Enums**
 

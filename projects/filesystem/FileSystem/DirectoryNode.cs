@@ -20,7 +20,9 @@ public class DirectoryNode : FSNode, ISearchable
 {
     private readonly List<FSNode> children = new();
 
-    public DirectoryNode(string name) : base(name) { }
+    public DirectoryNode(string name) : base(name)
+    {
+    }
 
     // Expose children as read-only. Callers can enumerate them, but
     // cannot Add / Remove / Clear — the only mutation path is Add().
@@ -74,6 +76,25 @@ public class DirectoryNode : FSNode, ISearchable
                 if (hit != null) return hit;
             }
         }
+
         return null;
+    }
+
+    public override FileNode? LargestFile()
+    {
+        FileNode? largest = null;
+        foreach (FSNode child in children)
+        {
+            if (child is FileNode file && (largest == null || file.Size() > largest.Size()))
+            {
+                largest = file;
+            }
+            else if (child is DirectoryNode directory)
+            {
+                largest = directory.LargestFile();
+            }
+        }
+
+        return largest;
     }
 }

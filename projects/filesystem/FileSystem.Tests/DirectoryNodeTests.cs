@@ -123,4 +123,34 @@ public class DirectoryNodeTests
 
         Assert.Equal(new FSNode[] { a, b, c }, d.Children);
     }
+
+    [Fact]
+    public void LargestFile_ReturnsLargestFile()
+    {
+        DirectoryNode d = new DirectoryNode("d");
+        FileNode a = new FileNode("a.txt", 1);
+        FileNode b = new FileNode("b.txt", 2);
+        FileNode c = new FileNode("c.txt", 3);
+        d.Add(a);
+        d.Add(b);
+        d.Add(c);
+
+        Assert.Equal(c, d.LargestFile());
+    }
+
+    [Fact]
+    public void LargestFile_ReturnsLargestFileInNestedDirectory()
+    {
+        DirectoryNode d = new DirectoryNode("d");
+        DirectoryNode d2 = new DirectoryNode("d2");
+        d.Add(d2);
+        FileNode a = new FileNode("a.txt", 1);
+        FileNode b = new FileNode("b.txt", 2);
+        FileNode c = new FileNode("c.txt", 3);
+        d2.Add(a);
+        d2.Add(b);
+        d2.Add(c);
+
+        Assert.Equal(c, d.LargestFile());
+    }
 }

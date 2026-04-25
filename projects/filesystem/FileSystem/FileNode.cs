@@ -44,4 +44,9 @@ public class FileNode : FSNode, ISearchable
     {
         return Name == name ? this : null;
     }
+
+    public override FileNode LargestFile()
+    {
+        return this;
+    }
 }

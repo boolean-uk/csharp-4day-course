@@ -73,4 +73,11 @@ public class FileNodeTests
         FileNode f = new FileNode("README.md", 100);
         Assert.Null(f.FindByName("readme.md"));
     }
+
+    [Fact]
+    public void LargestFile_ReturnsSelf()
+    {
+        FileNode f = new FileNode("readme.md", 100);
+        Assert.Same(f, f.LargestFile());
+    }
 }
