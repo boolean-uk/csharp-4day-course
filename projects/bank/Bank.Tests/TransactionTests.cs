@@ -1,5 +1,3 @@
-using BankApp;
-
 namespace BankApp.Tests;
 
 public class TransactionTests

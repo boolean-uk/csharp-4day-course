@@ -2,23 +2,9 @@ using System.Text;
 
 namespace BankApp;
 
-// A bank account belonging to one holder. Keeps its own transaction history
-// and computes its balance from that history (nothing else stores a balance).
-//
-// Key rules:
-//   • The opening balance passed to the constructor is recorded as the FIRST
-//     transaction (a Credit with description "Opening deposit") — UNLESS
-//     startingBalance is exactly 0, in which case the history starts empty.
-//   • Balance is derived: sum of Credits minus sum of Debits.
-//   • Deposit and Withdraw both require a positive amount (ArgumentException
-//     otherwise). Withdraw throws InvalidOperationException if the amount
-//     would take the balance below zero (no overdrafts in the core spec).
-//
-// The `transactions` list is private so outside code can only change the
-// account through Deposit / Withdraw — the balance invariant stays intact.
 public class Account
 {
-    private List<Transaction> transactions;
+    private readonly List<Transaction> _transactions;
 
     public string AccountNumber { get; }
     public string Holder { get; }
@@ -33,21 +19,20 @@ public class Account
 
         AccountNumber = accountNumber;
         Holder = holder;
-        transactions = new List<Transaction>();
+        _transactions = new List<Transaction>();
         OverdraftLimit = overdraftLimit;
         if (startingBalance > 0)
         {
-            transactions.Add(new Transaction(TransactionType.Credit, startingBalance, "Opening deposit"));
+            _transactions.Add(new Transaction(TransactionType.Credit, startingBalance, "Opening deposit"));
         }
     }
 
-    // Computed on every read — there's no stored balance field.
     public decimal Balance
     {
         get
         {
             decimal total = 0;
-            foreach (Transaction transaction in transactions)
+            foreach (Transaction transaction in _transactions)
             {
                 if (transaction.Type == TransactionType.Credit)
                 {
@@ -63,16 +48,9 @@ public class Account
         }
     }
 
-    public int TransactionCount
-    {
-        get { return transactions.Count; }
-    }
+    public int TransactionCount => _transactions.Count;
 
-    // Expose a read-only view — callers can enumerate but not Add/Remove.
-    public IReadOnlyList<Transaction> Transactions
-    {
-        get { return transactions.AsReadOnly(); }
-    }
+    public IReadOnlyList<Transaction> Transactions => _transactions.AsReadOnly();
 
     public void Deposit(decimal amount, string description = "Deposit")
     {
@@ -88,7 +66,7 @@ public class Account
 
         decimal newBalance = Balance + amount;
         string desc = description + $" (New Balance: {newBalance:N2})";
-        transactions.Add(new Transaction(TransactionType.Credit, amount, timestamp, desc));
+        _transactions.Add(new Transaction(TransactionType.Credit, amount, timestamp, desc));
     }
 
     public void Withdraw(decimal amount, string description = "Withdrawal")
@@ -110,7 +88,7 @@ public class Account
 
         decimal newBalance = Balance - amount;
         string desc = description + $" (New Balance: {newBalance:N2})";
-        transactions.Add(new Transaction(TransactionType.Debit, amount, timestamp, desc));
+        _transactions.Add(new Transaction(TransactionType.Debit, amount, timestamp, desc));
     }
 
     private string BuildStatement(List<Transaction> includedTransactions)
@@ -130,26 +108,21 @@ public class Account
         return sb.ToString();
     }
 
-    // Returns a printable multi-line bank statement. Format is deliberately
-    // our own choice here — the tests only check that the required fields
-    // appear in the output, so you're free to make it pretty.
     public string Statement()
     {
-        return BuildStatement(transactions);
+        return BuildStatement(_transactions);
     }
 
     public string Statement(DateTime from, DateTime to)
     {
         List<Transaction> transactionsInRange =
-            transactions.Where(t => t.Timestamp >= from && t.Timestamp <= to).ToList();
+            _transactions.Where(t => t.Timestamp >= from && t.Timestamp <= to).ToList();
         return BuildStatement(transactionsInRange);
     }
 
-    // Case-insensitive substring match on Description.
-    // Results are sorted oldest-first by Timestamp.
     public List<Transaction> FindTransactions(string search)
     {
-        return transactions.Where(t => t.Description.Contains(search, StringComparison.OrdinalIgnoreCase))
+        return _transactions.Where(t => t.Description.Contains(search, StringComparison.OrdinalIgnoreCase))
             .OrderBy(t => t.Timestamp).ToList();
     }
 }

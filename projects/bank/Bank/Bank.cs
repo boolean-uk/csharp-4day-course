@@ -1,63 +1,48 @@
 namespace BankApp;
 
-// The top-level simulation: one Bank holds many Accounts, generates account
-// numbers, and exposes summary info across the whole portfolio.
-//
-// Account numbers are auto-generated in the form "ACC-1000", "ACC-1001", ...
-// The next-number counter lives as an instance field on the Bank (one counter
-// per Bank instance). Simple, private, no `static` required.
 public class Bank
 {
-    private List<Account> accounts;
-    private int nextAccountNumber;
+    private readonly List<Account> _accounts;
+    private int _nextAccountNumber;
 
     public string Name { get; }
 
     public Bank(string name)
     {
         Name = name;
-        accounts = new List<Account>();
-        nextAccountNumber = 1000;
+        _accounts = new List<Account>();
+        _nextAccountNumber = 1000;
     }
 
-    public int AccountCount
-    {
-        get { return accounts.Count; }
-    }
+    public int AccountCount => _accounts.Count;
 
-    // Sum of every account's balance at this moment. Computed, not stored.
     public decimal TotalAssets
     {
-        get { return accounts.Sum(a => a.Balance); }
+        get { return _accounts.Sum(a => a.Balance); }
     }
 
-    public IReadOnlyList<Account> Accounts
-    {
-        get { return accounts.AsReadOnly(); }
-    }
+    public IReadOnlyList<Account> Accounts => _accounts.AsReadOnly();
 
     public Account OpenAccount(string holder, decimal startingBalance, decimal overdraftLimit = 0m)
     {
-        string accountNumber = $"ACC-{nextAccountNumber}";
-        nextAccountNumber++;
+        string accountNumber = $"ACC-{_nextAccountNumber}";
+        _nextAccountNumber++;
         Account account = new Account(accountNumber, holder, startingBalance, overdraftLimit);
-        accounts.Add(account);
+        _accounts.Add(account);
         return account;
     }
 
-    // Returns null when no account matches.
     public Account? FindAccount(string accountNumber)
     {
-        return accounts.FirstOrDefault(a => a.AccountNumber == accountNumber);
+        return _accounts.FirstOrDefault(a => a.AccountNumber == accountNumber);
     }
 
-    // Returns true if an account was found and removed, false otherwise.
     public bool CloseAccount(string accountNumber)
     {
         Account? account = FindAccount(accountNumber);
         if (account != null)
         {
-            accounts.Remove(account);
+            _accounts.Remove(account);
             return true;
         }
 
@@ -89,7 +74,7 @@ public class Bank
 
     public void ApplyInterest(decimal rate)
     {
-        foreach (Account account in accounts.Where(a => a.Balance > 0))
+        foreach (Account account in _accounts.Where(a => a.Balance > 0))
         {
             account.Deposit(account.Balance * rate, $"Interest {rate:P2}");
         }
