@@ -147,7 +147,7 @@ public class BankTests
         Bank bank = new Bank("Acme");
         Account a = bank.OpenAccount("Ada", 100m);
         Account b = bank.OpenAccount("Alan", 200m);
-        Assert.Throws<InvalidOperationException>(() => bank.Transfer(a.AccountNumber, b.AccountNumber, 150m));
+        Assert.Throws<InsufficientFundsException>(() => bank.Transfer(a.AccountNumber, b.AccountNumber, 150m));
     }
 
     [Fact]

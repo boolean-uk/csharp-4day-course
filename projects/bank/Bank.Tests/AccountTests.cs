@@ -94,7 +94,7 @@ public class AccountTests
     public void Withdraw_ThrowsOnInsufficientFunds()
     {
         Account a = new Account("ACC-1000", "Ada", 100m);
-        Assert.Throws<InvalidOperationException>(() => a.Withdraw(500m));
+        Assert.Throws<InsufficientFundsException>(() => a.Withdraw(500m));
     }
 
     [Fact]
@@ -105,7 +105,7 @@ public class AccountTests
         {
             a.Withdraw(500m);
         }
-        catch (InvalidOperationException)
+        catch (InsufficientFundsException)
         {
         }
 

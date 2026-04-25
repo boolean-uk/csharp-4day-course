@@ -5,6 +5,7 @@ namespace BankApp;
 public class Account
 {
     private readonly List<Transaction> _transactions;
+    private decimal AvailableBalance => Balance + OverdraftLimit;
 
     public string AccountNumber { get; }
     public string Holder { get; }
@@ -86,9 +87,9 @@ public class Account
             throw new ArgumentException("Amount must be greater than 0");
         }
 
-        if (amount > Balance + OverdraftLimit)
+        if (amount > AvailableBalance)
         {
-            throw new InvalidOperationException("Amount must be less than or equal to Balance");
+            throw new InsufficientFundsException(amount, AvailableBalance);
         }
 
         decimal newBalance = Balance - amount;

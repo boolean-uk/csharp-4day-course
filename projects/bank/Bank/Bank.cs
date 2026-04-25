@@ -65,7 +65,8 @@ public class Bank
 
         if (fromAccount.Balance < amount)
         {
-            throw new InvalidOperationException($"Insufficient funds in {fromAccountNumber}");
+            throw new InsufficientFundsException(amount, fromAccount.Balance,
+                $"Insufficient funds in {fromAccountNumber}");
         }
 
         fromAccount.Withdraw(amount, TransactionCategory.Transfer, $"Transfer to {toAccountNumber}");
