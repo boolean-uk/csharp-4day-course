@@ -1,9 +1,9 @@
 using BankApp;
 
 Bank bank = new Bank("Acme Savings");
-Account a = bank.OpenAccount("Ada Lovelace", 200m);
-Account b = bank.OpenAccount("Alan Turing", 200m);
-Account c = bank.OpenAccount("Bob Smith", 0m, 100m);
+Account a = bank.OpenSavingsAccount("Ada Lovelace", 200m);
+Account b = bank.OpenSavingsAccount("Alan Turing", 200m);
+Account c = bank.OpenCurrentAccount("Bob Smith", 0m, 100m);
 c.Withdraw(50m);
 a.Deposit(50m);
 a.Withdraw(20m);

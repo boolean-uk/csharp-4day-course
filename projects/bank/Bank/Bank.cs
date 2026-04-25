@@ -23,11 +23,20 @@ public class Bank
 
     public IReadOnlyList<Account> Accounts => _accounts.AsReadOnly();
 
-    public Account OpenAccount(string holder, decimal startingBalance, decimal overdraftLimit = 0m)
+    public SavingsAccount OpenSavingsAccount(string holder, decimal startingBalance)
     {
         string accountNumber = $"ACC-{_nextAccountNumber}";
         _nextAccountNumber++;
-        Account account = new Account(accountNumber, holder, startingBalance, overdraftLimit);
+        SavingsAccount account = new SavingsAccount(accountNumber, holder, startingBalance);
+        _accounts.Add(account);
+        return account;
+    }
+
+    public CurrentAccount OpenCurrentAccount(string holder, decimal startingBalance, decimal overdraftLimit)
+    {
+        string accountNumber = $"ACC-{_nextAccountNumber}";
+        _nextAccountNumber++;
+        CurrentAccount account = new CurrentAccount(accountNumber, holder, startingBalance, overdraftLimit);
         _accounts.Add(account);
         return account;
     }
@@ -63,21 +72,15 @@ public class Bank
             throw new InvalidOperationException("To account not found");
         }
 
-        if (fromAccount.Balance < amount)
-        {
-            throw new InsufficientFundsException(amount, fromAccount.Balance,
-                $"Insufficient funds in {fromAccountNumber}");
-        }
-
         fromAccount.Withdraw(amount, TransactionCategory.Transfer, $"Transfer to {toAccountNumber}");
         toAccount.Deposit(amount, TransactionCategory.Transfer, $"Transfer from {fromAccountNumber}");
     }
 
     public void ApplyInterest(decimal rate)
     {
-        foreach (Account account in _accounts.Where(a => a.Balance > 0))
+        foreach (Account account in _accounts)
         {
-            account.Deposit(account.Balance * rate, TransactionCategory.Interest, $"Interest {rate:P2}");
+            account.ApplyInterest(rate);
         }
     }
 }

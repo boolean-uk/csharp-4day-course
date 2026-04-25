@@ -122,6 +122,42 @@ public class AccountTests
         Assert.Throws<ArgumentException>(() => a.Withdraw(badAmount));
     }
 
+    [Fact]
+    public void ApplyInterest_OnBaseAccount_DoesNothing()
+    {
+        Account a = new Account("ACC-1000", "Ada", 100m);
+        a.ApplyInterest(0.05m);
+        Assert.Equal(100m, a.Balance);
+        Assert.Equal(1, a.TransactionCount);
+    }
+
+    [Fact]
+    public void SavingsAccount_ApplyInterest_AddsInterestCreditTransaction()
+    {
+        SavingsAccount a = new SavingsAccount("ACC-1000", "Ada", 100m);
+        a.ApplyInterest(0.05m);
+        Assert.Equal(105m, a.Balance);
+        Assert.Equal(2, a.TransactionCount);
+        Assert.Equal(TransactionType.Credit, a.Transactions[1].Type);
+        Assert.Equal(TransactionCategory.Interest, a.Transactions[1].Category);
+    }
+
+    [Fact]
+    public void CurrentAccount_Withdraw_AllowsBalanceToGoNegativeUpToOverdraftLimit()
+    {
+        CurrentAccount a = new CurrentAccount("ACC-1000", "Ada", 100m, 50m);
+        a.Withdraw(125m);
+        Assert.Equal(-25m, a.Balance);
+        Assert.Equal(50m, a.OverdraftLimit);
+    }
+
+    [Fact]
+    public void CurrentAccount_Withdraw_ThrowsWhenOverdraftLimitWouldBeExceeded()
+    {
+        CurrentAccount a = new CurrentAccount("ACC-1000", "Ada", 100m, 50m);
+        Assert.Throws<InsufficientFundsException>(() => a.Withdraw(151m));
+    }
+
     // ── Transactions (read-only view) ──────────────────────────────
 
     [Fact]

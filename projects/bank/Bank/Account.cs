@@ -5,13 +5,12 @@ namespace BankApp;
 public class Account
 {
     private readonly Ledger<Transaction> _transactions;
-    private decimal AvailableBalance => Balance + OverdraftLimit;
 
     public string AccountNumber { get; }
     public string Holder { get; }
-    public decimal OverdraftLimit { get; }
+    public virtual decimal OverdraftLimit => 0m;
 
-    public Account(string accountNumber, string holder, decimal startingBalance, decimal overdraftLimit = 0m)
+    public Account(string accountNumber, string holder, decimal startingBalance)
     {
         if (startingBalance < 0)
         {
@@ -21,7 +20,6 @@ public class Account
         AccountNumber = accountNumber;
         Holder = holder;
         _transactions = new Ledger<Transaction>();
-        OverdraftLimit = overdraftLimit;
         if (startingBalance > 0)
         {
             _transactions.Add(new Transaction(TransactionType.Credit, startingBalance, TransactionCategory.Other,
@@ -36,13 +34,16 @@ public class Account
             decimal total = 0;
             foreach (Transaction transaction in _transactions)
             {
-                if (transaction.Type == TransactionType.Credit)
+                switch (transaction.Type)
                 {
-                    total += transaction.Amount;
-                }
-                else if (transaction.Type == TransactionType.Debit)
-                {
-                    total -= transaction.Amount;
+                    case TransactionType.Credit:
+                        total += transaction.Amount;
+                        break;
+                    case TransactionType.Debit:
+                        total -= transaction.Amount;
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(transaction.Type));
                 }
             }
 
@@ -53,6 +54,20 @@ public class Account
     public int TransactionCount => _transactions.Count;
 
     public IReadOnlyList<Transaction> Transactions => _transactions.Entries;
+
+    protected void RecordCredit(decimal amount, DateTime timestamp, TransactionCategory category, string description)
+    {
+        decimal newBalance = Balance + amount;
+        string desc = description + $" (New Balance: {newBalance:N2})";
+        _transactions.Add(new Transaction(TransactionType.Credit, amount, category, timestamp, desc));
+    }
+
+    protected void RecordDebit(decimal amount, DateTime timestamp, TransactionCategory category, string description)
+    {
+        decimal newBalance = Balance - amount;
+        string desc = description + $" (New Balance: {newBalance:N2})";
+        _transactions.Add(new Transaction(TransactionType.Debit, amount, category, timestamp, desc));
+    }
 
     public void Deposit(decimal amount, TransactionCategory category = TransactionCategory.Other,
         string description = "Deposit")
@@ -68,9 +83,7 @@ public class Account
             throw new ArgumentException("Amount must be greater than 0");
         }
 
-        decimal newBalance = Balance + amount;
-        string desc = description + $" (New Balance: {newBalance:N2})";
-        _transactions.Add(new Transaction(TransactionType.Credit, amount, category, timestamp, desc));
+        RecordCredit(amount, timestamp, category, description);
     }
 
     public void Withdraw(decimal amount, TransactionCategory category = TransactionCategory.Other,
@@ -79,7 +92,8 @@ public class Account
         Withdraw(amount, DateTime.UtcNow, category, description);
     }
 
-    public void Withdraw(decimal amount, DateTime timestamp, TransactionCategory category = TransactionCategory.Other,
+    public virtual void Withdraw(decimal amount, DateTime timestamp,
+        TransactionCategory category = TransactionCategory.Other,
         string description = "Withdrawal")
     {
         if (amount <= 0)
@@ -87,14 +101,16 @@ public class Account
             throw new ArgumentException("Amount must be greater than 0");
         }
 
-        if (amount > AvailableBalance)
+        if (amount > Balance)
         {
-            throw new InsufficientFundsException(amount, AvailableBalance);
+            throw new InsufficientFundsException(amount, Balance);
         }
 
-        decimal newBalance = Balance - amount;
-        string desc = description + $" (New Balance: {newBalance:N2})";
-        _transactions.Add(new Transaction(TransactionType.Debit, amount, category, timestamp, desc));
+        RecordDebit(amount, timestamp, category, description);
+    }
+
+    public virtual void ApplyInterest(decimal rate)
+    {
     }
 
     private string BuildStatement(IEnumerable<Transaction> includedTransactions)
