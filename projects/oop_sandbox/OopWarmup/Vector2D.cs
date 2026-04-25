@@ -34,7 +34,7 @@ public class Vector2D
     // See the README for the exercise brief and a Wikipedia link.
     public double DotProduct(Vector2D other)
     {
-        throw new NotImplementedException("TODO: return X * other.X + Y * other.Y");
+        return X * other.X + Y * other.Y;
     }
 
     // EXERCISE 2: ToString override
@@ -43,6 +43,6 @@ public class Vector2D
     // Every type in C# inherits from object — see the README link.
     public override string ToString()
     {
-        throw new NotImplementedException("TODO: return $\"[{X}, {Y}]\"");
+        return $"[{X}, {Y}]";
     }
 }
