@@ -20,14 +20,15 @@ public class Triangle : Shape
 
     public override double Area
     {
-        // TODO: use Heron's formula. You'll need the side lengths first —
-        // Point.DistanceTo is already implemented.
-        get { throw new NotImplementedException("TODO: Heron's formula — see README link"); }
+        get
+        {
+            double ab = A.DistanceTo(B);
+            double bc = B.DistanceTo(C);
+            double ca = C.DistanceTo(A);
+            double s = (ab + bc + ca) / 2;
+            return Math.Sqrt(s * (s - ab) * (s - bc) * (s - ca));
+        }
     }
 
-    public override double Perimeter
-    {
-        // TODO: sum of the three side lengths.
-        get { throw new NotImplementedException("TODO: sum of A-B, B-C, C-A distances"); }
-    }
+    public override double Perimeter => A.DistanceTo(B) + B.DistanceTo(C) + C.DistanceTo(A);
 }

@@ -20,7 +20,9 @@ public class DirectoryNode : FSNode, ISearchable
 {
     private readonly List<FSNode> children = new();
 
-    public DirectoryNode(string name) : base(name) { }
+    public DirectoryNode(string name) : base(name)
+    {
+    }
 
     // Expose children as read-only. Callers can enumerate them, but
     // cannot Add / Remove / Clear — the only mutation path is Add().
@@ -74,6 +76,78 @@ public class DirectoryNode : FSNode, ISearchable
                 if (hit != null) return hit;
             }
         }
+
         return null;
+    }
+
+    public override FileNode? LargestFile()
+    {
+        FileNode? largest = null;
+        foreach (FSNode child in children)
+        {
+            if (child is FileNode file && (largest == null || file.Size() > largest.Size()))
+            {
+                largest = file;
+            }
+            else if (child is DirectoryNode directory)
+            {
+                largest = directory.LargestFile();
+            }
+        }
+
+        return largest;
+    }
+
+    public override List<FileNode> FilterByExtension(string ext)
+    {
+        List<FileNode> result = [];
+        foreach (FSNode child in children)
+        {
+            result.AddRange(child.FilterByExtension(ext));
+        }
+
+        return result;
+    }
+
+    public override Dictionary<string, int> CountByExtension()
+    {
+        Dictionary<string, int> result = [];
+        foreach (FSNode child in children)
+        {
+            foreach (var (key, value) in child.CountByExtension())
+            {
+                result[key] = result.TryGetValue(key, out int count) ? count + value : value;
+            }
+        }
+
+        return result;
+    }
+
+    public override int Depth()
+    {
+        if (children.Count == 0) return 0;
+        return 1 + children.Max(child => child.Depth());
+    }
+
+    public override void PrettyPrint(string? prefix = null, bool isLast = true)
+    {
+        bool isRoot = prefix is null;
+
+        if (isRoot)
+        {
+            Console.WriteLine(Name + "/");
+        }
+        else
+        {
+            Console.WriteLine(prefix + (isLast ? "└── " : "├── ") + Name + "/");
+        }
+
+        string childPrefix = isRoot ? string.Empty : prefix + (isLast ? "\t" : "│   ");
+
+        for (int i = 0; i < children.Count; i++)
+        {
+            bool childIsLast = i == children.Count - 1;
+            children[i].PrettyPrint(childPrefix, childIsLast);
+        }
     }
 }

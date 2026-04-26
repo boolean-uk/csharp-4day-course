@@ -1,5 +1,3 @@
-using BankApp;
-
 namespace BankApp.Tests;
 
 public class BankTests
@@ -14,33 +12,44 @@ public class BankTests
     }
 
     [Fact]
-    public void OpenAccount_ReturnsAccountWithAutoAssignedNumber()
+    public void OpenSavingsAccount_ReturnsSavingsAccountWithAutoAssignedNumber()
     {
         Bank b = new Bank("Acme");
-        Account a = b.OpenAccount("Ada", 100m);
+        SavingsAccount a = b.OpenSavingsAccount("Ada", 100m);
         Assert.Equal("ACC-1000", a.AccountNumber);
         Assert.Equal("Ada", a.Holder);
         Assert.Equal(100m, a.Balance);
     }
 
     [Fact]
-    public void OpenAccount_IncrementsAccountNumbers()
+    public void OpenCurrentAccount_ReturnsCurrentAccountWithOverdraftLimit()
     {
         Bank b = new Bank("Acme");
-        Account a = b.OpenAccount("Ada", 100m);
-        Account c = b.OpenAccount("Alan", 200m);
-        Account d = b.OpenAccount("Grace", 300m);
+        CurrentAccount a = b.OpenCurrentAccount("Ada", 100m, 250m);
+        Assert.Equal("ACC-1000", a.AccountNumber);
+        Assert.Equal("Ada", a.Holder);
+        Assert.Equal(100m, a.Balance);
+        Assert.Equal(250m, a.OverdraftLimit);
+    }
+
+    [Fact]
+    public void OpenAccountMethods_IncrementAccountNumbers()
+    {
+        Bank b = new Bank("Acme");
+        Account a = b.OpenSavingsAccount("Ada", 100m);
+        Account c = b.OpenCurrentAccount("Alan", 200m, 50m);
+        Account d = b.OpenSavingsAccount("Grace", 300m);
         Assert.Equal("ACC-1000", a.AccountNumber);
         Assert.Equal("ACC-1001", c.AccountNumber);
         Assert.Equal("ACC-1002", d.AccountNumber);
     }
 
     [Fact]
-    public void OpenAccount_StoresTheAccountInTheBank()
+    public void OpenAccountMethods_StoreTheAccountsInTheBank()
     {
         Bank b = new Bank("Acme");
-        b.OpenAccount("Ada", 100m);
-        b.OpenAccount("Alan", 200m);
+        b.OpenSavingsAccount("Ada", 100m);
+        b.OpenCurrentAccount("Alan", 200m, 100m);
         Assert.Equal(2, b.AccountCount);
     }
 
@@ -48,10 +57,10 @@ public class BankTests
     public void TotalAssets_SumsEveryAccountsBalance()
     {
         Bank b = new Bank("Acme");
-        b.OpenAccount("Ada", 100m);
-        b.OpenAccount("Alan", 250m);
-        Account grace = b.OpenAccount("Grace", 500m);
-        grace.Withdraw(50m);   // Grace now 450
+        b.OpenSavingsAccount("Ada", 100m);
+        b.OpenSavingsAccount("Alan", 250m);
+        Account grace = b.OpenCurrentAccount("Grace", 500m, 200m);
+        grace.Withdraw(50m); // Grace now 450
         Assert.Equal(800m, b.TotalAssets); // 100 + 250 + 450
     }
 
@@ -59,8 +68,8 @@ public class BankTests
     public void FindAccount_ReturnsTheMatchingAccount()
     {
         Bank b = new Bank("Acme");
-        Account a = b.OpenAccount("Ada", 100m);
-        b.OpenAccount("Alan", 200m);
+        Account a = b.OpenSavingsAccount("Ada", 100m);
+        b.OpenCurrentAccount("Alan", 200m, 100m);
         Account? found = b.FindAccount(a.AccountNumber);
         Assert.NotNull(found);
         Assert.Same(a, found);
@@ -70,7 +79,7 @@ public class BankTests
     public void FindAccount_ReturnsNullWhenUnknown()
     {
         Bank b = new Bank("Acme");
-        b.OpenAccount("Ada", 100m);
+        b.OpenSavingsAccount("Ada", 100m);
         Assert.Null(b.FindAccount("ACC-9999"));
     }
 
@@ -78,8 +87,8 @@ public class BankTests
     public void CloseAccount_RemovesTheAccountAndReturnsTrue()
     {
         Bank b = new Bank("Acme");
-        Account a = b.OpenAccount("Ada", 100m);
-        b.OpenAccount("Alan", 200m);
+        Account a = b.OpenSavingsAccount("Ada", 100m);
+        b.OpenCurrentAccount("Alan", 200m, 100m);
         bool closed = b.CloseAccount(a.AccountNumber);
         Assert.True(closed);
         Assert.Equal(1, b.AccountCount);
@@ -90,7 +99,7 @@ public class BankTests
     public void CloseAccount_ReturnsFalseWhenUnknown()
     {
         Bank b = new Bank("Acme");
-        b.OpenAccount("Ada", 100m);
+        b.OpenSavingsAccount("Ada", 100m);
         Assert.False(b.CloseAccount("ACC-9999"));
         Assert.Equal(1, b.AccountCount);
     }
@@ -99,7 +108,7 @@ public class BankTests
     public void Accounts_ExposesReadOnlyView()
     {
         Bank b = new Bank("Acme");
-        b.OpenAccount("Ada", 100m);
+        b.OpenSavingsAccount("Ada", 100m);
         Assert.IsAssignableFrom<IReadOnlyList<Account>>(b.Accounts);
     }
 
@@ -110,9 +119,79 @@ public class BankTests
         // the counter is per-Bank, not global.
         Bank one = new Bank("One");
         Bank two = new Bank("Two");
-        Account a = one.OpenAccount("Ada", 100m);
-        Account c = two.OpenAccount("Alan", 200m);
+        Account a = one.OpenSavingsAccount("Ada", 100m);
+        Account c = two.OpenCurrentAccount("Alan", 200m, 50m);
         Assert.Equal("ACC-1000", a.AccountNumber);
         Assert.Equal("ACC-1000", c.AccountNumber);
+    }
+
+    [Fact]
+    public void Transfer_TransfersFundsBetweenAccounts()
+    {
+        Bank bank = new Bank("Acme");
+        Account a = bank.OpenSavingsAccount("Ada", 100m);
+        Account b = bank.OpenSavingsAccount("Alan", 200m);
+        bank.Transfer(a.AccountNumber, b.AccountNumber, 50m);
+        Assert.Equal(50m, a.Balance);
+        Assert.Equal(250m, b.Balance);
+    }
+
+    [Fact]
+    public void Transfer_AllowsCurrentAccountToUseItsOverdraftLimit()
+    {
+        Bank bank = new Bank("Acme");
+        Account from = bank.OpenCurrentAccount("Ada", 100m, 50m);
+        Account to = bank.OpenSavingsAccount("Alan", 200m);
+        bank.Transfer(from.AccountNumber, to.AccountNumber, 125m);
+        Assert.Equal(-25m, from.Balance);
+        Assert.Equal(325m, to.Balance);
+    }
+
+    [Fact]
+    public void Transfer_ThrowsWhenFromAccountNotFound()
+    {
+        Bank bank = new Bank("Acme");
+        Account b = bank.OpenSavingsAccount("Alan", 200m);
+        Assert.Throws<InvalidOperationException>(() => bank.Transfer("ACC-9999", b.AccountNumber, 50m));
+    }
+
+    [Fact]
+    public void Transfer_ThrowsWhenToAccountNotFound()
+    {
+        Bank bank = new Bank("Acme");
+        Account a = bank.OpenSavingsAccount("Ada", 100m);
+        Assert.Throws<InvalidOperationException>(() => bank.Transfer(a.AccountNumber, "ACC-9999", 50m));
+    }
+
+    [Fact]
+    public void Transfer_ThrowsWhenInsufficientFunds()
+    {
+        Bank bank = new Bank("Acme");
+        Account a = bank.OpenSavingsAccount("Ada", 100m);
+        Account b = bank.OpenSavingsAccount("Alan", 200m);
+        Assert.Throws<InsufficientFundsException>(() => bank.Transfer(a.AccountNumber, b.AccountNumber, 150m));
+    }
+
+    [Fact]
+    public void ApplyInterest_CreditsInterestToSavingsAccountsWithPositiveBalance()
+    {
+        Bank bank = new Bank("Acme");
+        Account a = bank.OpenSavingsAccount("Ada", 100m);
+        Account b = bank.OpenSavingsAccount("Alan", 200m);
+        bank.ApplyInterest(0.05m);
+        Assert.Equal(105m, a.Balance);
+        Assert.Equal(210m, b.Balance);
+    }
+
+    [Fact]
+    public void ApplyInterest_UsesPolymorphismForMixedAccountTypes()
+    {
+        Bank bank = new Bank("Acme");
+        Account savings = bank.OpenSavingsAccount("Ada", 100m);
+        Account current = bank.OpenCurrentAccount("Alan", 0m, 100m);
+        current.Withdraw(50m);
+        bank.ApplyInterest(0.05m);
+        Assert.Equal(105m, savings.Balance);
+        Assert.Equal(-50m, current.Balance);
     }
 }

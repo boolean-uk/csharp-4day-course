@@ -12,28 +12,28 @@
 2. You can follow the [official installation guide](https://learn.microsoft.com/en-us/visualstudio/install/install-visual-studio?view=visualstudio#step-4---choose-workloads) making sure to select "ASP.NET and web development" and the `.NET desktop development` workloads. Make sure to also go to `Individual Components` -> `.NET 10 Runtime` (see screenshot)
 3. Verify installation by launching Visual Studio on your Windows machine
 
-
 ![.NET 10 Runtime](screenshots/net_10_runtime.png)
 
 ## 2. Language tour (reading ~25 min)
 
-Please *read fully* the following guides, ~25 min
+Please _read fully_ the following guides, ~25 min
 
-- [ ] [C# Overview](https://learn.microsoft.com/en-us/dotnet/csharp/tour-of-csharp/overview) -> this explains file based or project based apps (we will use project based)
-- [ ] [Program structure](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/program-structure/) -> we will use project based apps with a `Program.cs` that uses **top level statements** instead of a `Main` method
-- [ ] [Namespaces and using directives](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/program-structure/namespaces)
-- [ ] [Top level statements detail](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/program-structure/top-level-statements)
-- [ ] [Type system overview](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/types/) -> C# is a typed language, so we need to learn about types and how to use them
-- [ ] [Built-in types](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/types/built-in-types) -> continuation from overview
-- [ ] [Generics (lists)](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/types/generics)
-- [ ] [Classes](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/types/classes)
-- [ ] [OOP](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/object-oriented/)
-- [ ] [OOP - objects](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/object-oriented/objects)
-- [ ] [Exceptions and errors overview](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/exceptions/)
+- [x] [C# Overview](https://learn.microsoft.com/en-us/dotnet/csharp/tour-of-csharp/overview) -> this explains file based or project based apps (we will use project based)
+- [x] [Program structure](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/program-structure/) -> we will use project based apps with a `Program.cs` that uses **top level statements** instead of a `Main` method
+- [x] [Namespaces and using directives](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/program-structure/namespaces)
+- [x] [Top level statements detail](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/program-structure/top-level-statements)
+- [x] [Type system overview](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/types/) -> C# is a typed language, so we need to learn about types and how to use them
+- [x] [Built-in types](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/types/built-in-types) -> continuation from overview
+- [x] [Generics (lists)](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/types/generics)
+- [x] [Classes](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/types/classes)
+- [x] [OOP](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/object-oriented/)
+- [x] [OOP - objects](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/object-oriented/objects)
+- [x] [Exceptions and errors overview](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/exceptions/)
 
 Additional useful reading:
-- [ ] [Differences for python developers](https://learn.microsoft.com/en-us/dotnet/csharp/tour-of-csharp/tips-for-python-developers) -> important bits are: syntax, use of tokens and `;` to separate code blocks (similar to JS), generics and nullable types
-- [ ] [Differences for javascript developers](https://learn.microsoft.com/en-us/dotnet/csharp/tour-of-csharp/tips-for-javascript-developers) -> syntax, async/await (will be useful towards end of our lessons)
+
+- [x] [Differences for python developers](https://learn.microsoft.com/en-us/dotnet/csharp/tour-of-csharp/tips-for-python-developers) -> important bits are: syntax, use of tokens and `;` to separate code blocks (similar to JS), generics and nullable types
+- [x] [Differences for javascript developers](https://learn.microsoft.com/en-us/dotnet/csharp/tour-of-csharp/tips-for-javascript-developers) -> syntax, async/await (will be useful towards end of our lessons)
 
 You should be familiar, by the end of the reading, with the following key concepts:
 
@@ -115,7 +115,7 @@ Once the core themes' exercises are green in Test Explorer, tackle the advanced 
 
 - `StringsAdvanced` — `StringBuilder` + a small CSV-row parser.
 - `ArraysAdvanced` — multi-dimensional (`int[,]`) vs jagged (`int[][]`) arrays + a matrix transpose and a duplicate-detection exercise.
-- `ControlFlowAdvanced` — `switch` *expression* (C# 8+) and relational patterns (`>= 70 => "A"`) for collapsing else-if chains into one tidy block.
+- `ControlFlowAdvanced` — `switch` _expression_ (C# 8+) and relational patterns (`>= 70 => "A"`) for collapsing else-if chains into one tidy block.
 
 ## 4. Bank project (capstone)
 

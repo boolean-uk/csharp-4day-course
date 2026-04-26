@@ -20,6 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="..\Bank\GlobalUsings.cs" Link="GlobalUsings.cs" />
     <ProjectReference Include="..\Bank\Bank.csproj" />
   </ItemGroup>
 

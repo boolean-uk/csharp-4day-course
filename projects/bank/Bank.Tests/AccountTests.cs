@@ -1,5 +1,3 @@
-using BankApp;
-
 namespace BankApp.Tests;
 
 public class AccountTests
@@ -35,8 +33,7 @@ public class AccountTests
     [Fact]
     public void Constructor_ThrowsOnNegativeStartingBalance()
     {
-        Assert.Throws<ArgumentException>(
-            () => new Account("ACC-1000", "Ada", -1m));
+        Assert.Throws<ArgumentException>(() => new Account("ACC-1000", "Ada", -1m));
     }
 
     // ── Balance ────────────────────────────────────────────────────
@@ -97,14 +94,21 @@ public class AccountTests
     public void Withdraw_ThrowsOnInsufficientFunds()
     {
         Account a = new Account("ACC-1000", "Ada", 100m);
-        Assert.Throws<InvalidOperationException>(() => a.Withdraw(500m));
+        Assert.Throws<InsufficientFundsException>(() => a.Withdraw(500m));
     }
 
     [Fact]
     public void Withdraw_DoesNotRecordTransactionWhenItFails()
     {
         Account a = new Account("ACC-1000", "Ada", 100m);
-        try { a.Withdraw(500m); } catch (InvalidOperationException) { }
+        try
+        {
+            a.Withdraw(500m);
+        }
+        catch (InsufficientFundsException)
+        {
+        }
+
         Assert.Equal(1, a.TransactionCount); // only the opening deposit
         Assert.Equal(100m, a.Balance);
     }
@@ -118,12 +122,49 @@ public class AccountTests
         Assert.Throws<ArgumentException>(() => a.Withdraw(badAmount));
     }
 
+    [Fact]
+    public void ApplyInterest_OnBaseAccount_DoesNothing()
+    {
+        Account a = new Account("ACC-1000", "Ada", 100m);
+        a.ApplyInterest(0.05m);
+        Assert.Equal(100m, a.Balance);
+        Assert.Equal(1, a.TransactionCount);
+    }
+
+    [Fact]
+    public void SavingsAccount_ApplyInterest_AddsInterestCreditTransaction()
+    {
+        SavingsAccount a = new SavingsAccount("ACC-1000", "Ada", 100m);
+        a.ApplyInterest(0.05m);
+        Assert.Equal(105m, a.Balance);
+        Assert.Equal(2, a.TransactionCount);
+        Assert.Equal(TransactionType.Credit, a.Transactions[1].Type);
+        Assert.Equal(TransactionCategory.Interest, a.Transactions[1].Category);
+    }
+
+    [Fact]
+    public void CurrentAccount_Withdraw_AllowsBalanceToGoNegativeUpToOverdraftLimit()
+    {
+        CurrentAccount a = new CurrentAccount("ACC-1000", "Ada", 100m, 50m);
+        a.Withdraw(125m);
+        Assert.Equal(-25m, a.Balance);
+        Assert.Equal(50m, a.OverdraftLimit);
+    }
+
+    [Fact]
+    public void CurrentAccount_Withdraw_ThrowsWhenOverdraftLimitWouldBeExceeded()
+    {
+        CurrentAccount a = new CurrentAccount("ACC-1000", "Ada", 100m, 50m);
+        Assert.Throws<InsufficientFundsException>(() => a.Withdraw(151m));
+    }
+
     // ── Transactions (read-only view) ──────────────────────────────
 
     [Fact]
     public void Transactions_IsReadOnlyView()
     {
         Account a = new Account("ACC-1000", "Ada", 100m);
+
         // The returned collection is IReadOnlyList — there is no Add method,
         // so callers cannot bypass Deposit / Withdraw to mutate history.
         Assert.IsAssignableFrom<IReadOnlyList<Transaction>>(a.Transactions);
@@ -174,6 +215,7 @@ public class AccountTests
         a.Deposit(50m);
         a.Withdraw(30m);
         a.Deposit(20m);
+
         // "Deposit" should match both "Opening deposit" (case-insensitive)
         // and the two "Deposit" entries.
         List<Transaction> matches = a.FindTransactions("deposit");
@@ -204,10 +246,11 @@ public class AccountTests
     public void FindTransactions_ReturnsResultsSortedByTimestampOldestFirst()
     {
         Account a = new Account("ACC-1000", "Ada", 100m);
+
         // Small sleeps ensure distinct timestamps so the sort is verifiable.
-        System.Threading.Thread.Sleep(15);
+        Thread.Sleep(15);
         a.Deposit(50m);
-        System.Threading.Thread.Sleep(15);
+        Thread.Sleep(15);
         a.Deposit(20m);
 
         List<Transaction> matches = a.FindTransactions("deposit");
@@ -216,5 +259,28 @@ public class AccountTests
         {
             Assert.True(matches[i - 1].Timestamp <= matches[i].Timestamp);
         }
+    }
+
+
+    [Fact]
+    public void Statement_ReturnsTransactionsInRange()
+    {
+        Account a = new Account("ACC-1000", "Ada", 0m);
+        DateTime from = new DateTime(2026, 1, 10, 0, 0, 0, DateTimeKind.Utc);
+        DateTime to = new DateTime(2026, 1, 15, 23, 59, 59, DateTimeKind.Utc);
+
+        a.Deposit(25m, new DateTime(2026, 1, 5, 9, 0, 0, DateTimeKind.Utc), TransactionCategory.Other, "Too early");
+        a.Deposit(50m, new DateTime(2026, 1, 10, 12, 0, 0, DateTimeKind.Utc), TransactionCategory.Other,
+            "In range deposit");
+        a.Withdraw(20m, new DateTime(2026, 1, 15, 18, 30, 0, DateTimeKind.Utc), TransactionCategory.Other,
+            "In range withdrawal");
+        a.Deposit(10m, new DateTime(2026, 1, 20, 9, 0, 0, DateTimeKind.Utc), TransactionCategory.Other, "Too late");
+
+        string s = a.Statement(from, to);
+
+        Assert.Contains("In range deposit", s);
+        Assert.Contains("In range withdrawal", s);
+        Assert.DoesNotContain("Too early", s);
+        Assert.DoesNotContain("Too late", s);
     }
 }

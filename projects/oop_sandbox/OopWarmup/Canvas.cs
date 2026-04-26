@@ -31,6 +31,15 @@ public class Canvas
     // that was added, not a new or copied shape.
     public Shape? FindLargest()
     {
-        throw new NotImplementedException("TODO: iterate shapes, return the one with max Area; null if empty");
+        Shape? largest = null;
+        foreach (Shape s in shapes)
+        {
+            if (largest == null || s.Area > largest.Area)
+            {
+                largest = s;
+            }
+        }
+
+        return largest;
     }
 }

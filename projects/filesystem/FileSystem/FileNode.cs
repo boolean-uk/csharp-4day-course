@@ -44,4 +44,39 @@ public class FileNode : FSNode, ISearchable
     {
         return Name == name ? this : null;
     }
+
+    public override FileNode LargestFile()
+    {
+        return this;
+    }
+
+    public override List<FileNode> FilterByExtension(string ext)
+    {
+        return Name.EndsWith(ext, StringComparison.OrdinalIgnoreCase)
+            ? [this]
+            : new List<FileNode>();
+    }
+
+    public override Dictionary<string, int> CountByExtension()
+    {
+        return new Dictionary<string, int> { { Path.GetExtension(Name).ToLowerInvariant(), 1 } };
+    }
+
+    public override int Depth()
+    {
+        return 0;
+    }
+
+    public override void PrettyPrint(string? prefix = null, bool isLast = true)
+    {
+        bool isRoot = prefix is null;
+
+        if (isRoot)
+        {
+            Console.WriteLine(Name);
+            return;
+        }
+
+        Console.WriteLine(prefix + (isLast ? "└── " : "├── ") + Name);
+    }
 }

@@ -25,7 +25,19 @@ public static class ArraysAdvanced
     //     result[c, r] = matrix[r, c].
     public static int[,] Transpose(int[,] matrix)
     {
-        throw new NotImplementedException("TODO: new int[cols, rows], copy with indices swapped");
+        int rowCount = matrix.GetLength(0);
+        int colCount = matrix.GetLength(1);
+        int[,] result = new int[colCount, rowCount];
+
+        for (int r = 0; r < rowCount; r++)
+        {
+            for (int c = 0; c < colCount; c++)
+            {
+                result[c, r] = matrix[r, c];
+            }
+        }
+
+        return result;
     }
 
     // ADVANCED EXERCISE 2: HasDuplicates
@@ -42,6 +54,17 @@ public static class ArraysAdvanced
     //       Only return false once every pair has been checked.
     public static bool HasDuplicates(int[] numbers)
     {
-        throw new NotImplementedException("TODO: nested loops, compare each pair of indices");
+        for (int i = 0; i < numbers.Length; i++)
+        {
+            for (int j = i + 1; j < numbers.Length; j++)
+            {
+                if (numbers[i] == numbers[j])
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }

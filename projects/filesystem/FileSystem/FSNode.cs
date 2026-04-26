@@ -40,4 +40,14 @@ public abstract class FSNode
     // `indent` controls nesting — each level adds two spaces of leading
     // whitespace, so DirectoryNode can call child.Print(indent + 1).
     public abstract void Print(int indent = 0);
+
+    public abstract FileNode? LargestFile();
+
+    public abstract List<FileNode> FilterByExtension(string ext);
+
+    public abstract Dictionary<string, int> CountByExtension();
+
+    public abstract int Depth();
+
+    public abstract void PrettyPrint(string? prefix = null, bool isLast = true);
 }

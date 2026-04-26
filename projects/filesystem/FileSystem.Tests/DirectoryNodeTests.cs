@@ -123,4 +123,167 @@ public class DirectoryNodeTests
 
         Assert.Equal(new FSNode[] { a, b, c }, d.Children);
     }
+
+    [Fact]
+    public void LargestFile_ReturnsLargestFile()
+    {
+        DirectoryNode d = new DirectoryNode("d");
+        FileNode a = new FileNode("a.txt", 1);
+        FileNode b = new FileNode("b.txt", 2);
+        FileNode c = new FileNode("c.txt", 3);
+        d.Add(a);
+        d.Add(b);
+        d.Add(c);
+
+        Assert.Equal(c, d.LargestFile());
+    }
+
+    [Fact]
+    public void LargestFile_ReturnsLargestFileInNestedDirectory()
+    {
+        DirectoryNode d = new DirectoryNode("d");
+        DirectoryNode d2 = new DirectoryNode("d2");
+        d.Add(d2);
+        FileNode a = new FileNode("a.txt", 1);
+        FileNode b = new FileNode("b.txt", 2);
+        FileNode c = new FileNode("c.txt", 3);
+        d2.Add(a);
+        d2.Add(b);
+        d2.Add(c);
+
+        Assert.Equal(c, d.LargestFile());
+    }
+
+    [Fact]
+    public void FilterByExtension_ReturnsFilesWithMatchingExtension()
+    {
+        DirectoryNode d = new DirectoryNode("d");
+        FileNode a = new FileNode("a.txt", 1);
+        FileNode b = new FileNode("b.md", 2);
+        FileNode c = new FileNode("c.txt", 3);
+        d.Add(a);
+        d.Add(b);
+        d.Add(c);
+
+        Assert.Equal([b], d.FilterByExtension(".md"));
+        Assert.Equal([a, c], d.FilterByExtension(".txt"));
+        Assert.Equal([], d.FilterByExtension(".cs"));
+    }
+
+    [Fact]
+    public void FilterByExtension_ReturnsFilesWithMatchingExtensionInNestedDirectories()
+    {
+        DirectoryNode d = new DirectoryNode("d");
+        DirectoryNode d2 = new DirectoryNode("d2");
+        d.Add(d2);
+        FileNode a = new FileNode("a.txt", 1);
+        FileNode b = new FileNode("b.md", 2);
+        FileNode c = new FileNode("c.txt", 3);
+        d2.Add(a);
+        d2.Add(b);
+        d2.Add(c);
+
+        Assert.Equal([a, c], d.FilterByExtension(".txt"));
+        Assert.Equal([b], d.FilterByExtension(".md"));
+    }
+
+    [Fact]
+    public void CountByExtension_ReturnsCountsForExtensions()
+    {
+        DirectoryNode d = new DirectoryNode("d");
+        FileNode a = new FileNode("a.txt", 1);
+        FileNode b = new FileNode("b.md", 2);
+        FileNode c = new FileNode("c.txt", 3);
+        d.Add(a);
+        d.Add(b);
+        d.Add(c);
+
+        Assert.Equal(new Dictionary<string, int> { { ".txt", 2 }, { ".md", 1 } }, d.CountByExtension());
+    }
+
+    [Fact]
+    public void CountByExtension_ReturnsCountsForExtensionsInNestedDirectories()
+    {
+        DirectoryNode d = new DirectoryNode("d");
+        DirectoryNode d2 = new DirectoryNode("d2");
+        d.Add(d2);
+        FileNode a = new FileNode("a.txt", 1);
+        FileNode b = new FileNode("b.md", 2);
+        FileNode c = new FileNode("c.txt", 3);
+        d2.Add(a);
+        d2.Add(b);
+        d2.Add(c);
+
+        Assert.Equal(new Dictionary<string, int> { { ".txt", 2 }, { ".md", 1 } }, d.CountByExtension());
+    }
+
+    [Fact]
+    public void Depth_ReturnsDepthOfDirectory()
+    {
+        DirectoryNode d = new DirectoryNode("d");
+        FileNode a = new FileNode("a.txt", 1);
+        FileNode b = new FileNode("b.md", 2);
+        FileNode c = new FileNode("c.txt", 3);
+        d.Add(a);
+        d.Add(b);
+        d.Add(c);
+
+        Assert.Equal(1, d.Depth());
+    }
+
+    [Fact]
+    public void Depth_ReturnsDepthOfNestedDirectories()
+    {
+        DirectoryNode d = new DirectoryNode("d");
+        DirectoryNode d2 = new DirectoryNode("d2");
+        DirectoryNode d3 = new DirectoryNode("d3");
+        d.Add(d2);
+        d2.Add(d3);
+        Assert.Equal(2, d.Depth());
+        Assert.Equal(1, d2.Depth());
+        Assert.Equal(0, d3.Depth());
+    }
+
+    [Fact]
+    public void Depth_ReturnsDepthOfEmptyDirectory()
+    {
+        DirectoryNode d = new DirectoryNode("d");
+        Assert.Equal(0, d.Depth());
+    }
+
+    [Fact]
+    public void PrettyPrint_PrintsDirectory()
+    {
+        DirectoryNode d = new DirectoryNode("d");
+        FileNode a = new FileNode("a.txt", 1);
+        FileNode b = new FileNode("b.md", 2);
+        FileNode c = new FileNode("c.txt", 3);
+        d.Add(a);
+        d.Add(b);
+        d.Add(c);
+
+        StringWriter sw = new StringWriter();
+        Console.SetOut(sw);
+        d.PrettyPrint();
+        Assert.Equal("d/\r\n├── a.txt\r\n├── b.md\r\n└── c.txt", sw.ToString().Trim());
+    }
+
+    [Fact]
+    public void PrettyPrint_PrintsNestedDirectory()
+    {
+        DirectoryNode d = new DirectoryNode("d");
+        DirectoryNode d2 = new DirectoryNode("d2");
+        d.Add(d2);
+        FileNode a = new FileNode("a.txt", 1);
+        FileNode b = new FileNode("b.md", 2);
+        FileNode c = new FileNode("c.txt", 3);
+        d2.Add(a);
+        d2.Add(b);
+        d2.Add(c);
+
+        StringWriter sw = new StringWriter();
+        Console.SetOut(sw);
+        d.PrettyPrint();
+        Assert.Equal("d/\r\n└── d2/\r\n\t├── a.txt\r\n\t├── b.md\r\n\t└── c.txt", sw.ToString().Trim());
+    }
 }

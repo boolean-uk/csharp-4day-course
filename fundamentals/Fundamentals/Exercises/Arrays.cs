@@ -11,7 +11,13 @@ public static class Arrays
     // Hint: Lesson F showed two ways to iterate — pick one and accumulate a total.
     public static int SumOfArray(int[] numbers)
     {
-        throw new NotImplementedException("TODO: iterate and accumulate a total");
+        int sum = 0;
+        foreach (int number in numbers)
+        {
+            sum += number;
+        }
+
+        return sum;
     }
 
     // EXERCISE 2: FindLargest
@@ -23,7 +29,16 @@ public static class Arrays
     //       see something bigger.
     public static int FindLargest(int[] numbers)
     {
-        throw new NotImplementedException("TODO: track the largest seen so far");
+        int largest = int.MinValue;
+        foreach (int number in numbers)
+        {
+            if (number > largest)
+            {
+                largest = number;
+            }
+        }
+
+        return largest;
     }
 
     // EXERCISE 3: CountEvens
@@ -33,7 +48,16 @@ public static class Arrays
     // Hint: a number is even when `n % 2 == 0`. Increment a counter each time.
     public static int CountEvens(int[] numbers)
     {
-        throw new NotImplementedException("TODO: count values where n % 2 == 0");
+        int count = 0;
+        foreach (int number in numbers)
+        {
+            if (number % 2 == 0)
+            {
+                count++;
+            }
+        }
+
+        return count;
     }
 
     // EXERCISE 4: ReverseArray
@@ -45,6 +69,13 @@ public static class Arrays
     //       source index and the destination index move in opposite directions.
     public static int[] ReverseArray(int[] numbers)
     {
-        throw new NotImplementedException("TODO: build a new array with indices walking in opposite directions");
+        int[] newArr = new int[numbers.Length];
+        int destIndex = numbers.Length - 1;
+        foreach (int number in numbers)
+        {
+            newArr[destIndex] = number;
+            destIndex--;
+        }
+        return newArr;
     }
 }

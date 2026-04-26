@@ -23,7 +23,7 @@ public class ShoppingCart
     //       exactly this pattern for its Students list.
     public ShoppingCart()
     {
-        throw new NotImplementedException("TODO: initialise Items to an empty list");
+        Items = [];
     }
 
     // EXERCISE 2: Add
@@ -31,7 +31,7 @@ public class ShoppingCart
     // Example: cart.Add("apple"); cart.Count() → 1
     public void Add(string item)
     {
-        throw new NotImplementedException("TODO: call Items.Add(item)");
+        Items.Add(item);
     }
 
     // EXERCISE 3: Count
@@ -39,7 +39,7 @@ public class ShoppingCart
     // Example: empty cart → 0; after two Add calls → 2
     public int Count()
     {
-        throw new NotImplementedException("TODO: return Items.Count");
+        return Items.Count;
     }
 
     // EXERCISE 4: Contains
@@ -48,7 +48,7 @@ public class ShoppingCart
     // Hint: List<T> has a built-in .Contains method — you can delegate to it.
     public bool Contains(string item)
     {
-        throw new NotImplementedException("TODO: return Items.Contains(item)");
+        return Items.Contains(item);
     }
 
     // EXERCISE 5: Remove
@@ -59,6 +59,6 @@ public class ShoppingCart
     // Hint: List<T>.Remove(item) already returns the bool you need.
     public bool Remove(string item)
     {
-        throw new NotImplementedException("TODO: return Items.Remove(item)");
+        return Items.Remove(item);
     }
 }

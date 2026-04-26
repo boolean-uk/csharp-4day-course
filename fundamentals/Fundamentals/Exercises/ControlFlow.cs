@@ -10,7 +10,18 @@ public static class ControlFlow
     // Hint: if / else if / else chain. See Lesson A.
     public static string Sign(int n)
     {
-        throw new NotImplementedException("TODO: compare n against 0 with if / else if / else");
+        if (n > 0)
+        {
+            return "positive";
+        }
+        else if (n < 0)
+        {
+            return "negative";
+        }
+        else
+        {
+            return "zero";
+        }
     }
 
     // EXERCISE 2: IsLeapYear
@@ -22,7 +33,12 @@ public static class ControlFlow
     // Hint: combine conditions with && and ||, or nest ifs. Either approach works.
     public static bool IsLeapYear(int year)
     {
-        throw new NotImplementedException("TODO: apply the divisible-by-4 / 100 / 400 rules");
+        if ((year % 4 == 0 && year % 100 != 0) || year % 400 == 0)
+        {
+            return true;
+        }
+
+        return false;
     }
 
     // EXERCISE 3: DayName
@@ -31,7 +47,25 @@ public static class ControlFlow
     // Hint: switch STATEMENT with 7 cases + default. See Lesson D.
     public static string DayName(int day)
     {
-        throw new NotImplementedException("TODO: switch on day, return the 3-letter name");
+        switch (day)
+        {
+            case 1:
+                return "Mon";
+            case 2:
+                return "Tue";
+            case 3:
+                return "Wed";
+            case 4:
+                return "Thu";
+            case 5:
+                return "Fri";
+            case 6:
+                return "Sat";
+            case 7:
+                return "Sun";
+            default:
+                return "?";
+        }
     }
 
     // EXERCISE 4: IsVowel
@@ -40,7 +74,17 @@ public static class ControlFlow
     // Hint: switch STATEMENT with stacked case labels. Lowercase first via char.ToLower(c).
     public static bool IsVowel(char c)
     {
-        throw new NotImplementedException("TODO: switch on the lowercased char, stack the vowel cases");
+        switch (char.ToLower(c))
+        {
+            case 'a':
+            case 'e':
+            case 'i':
+            case 'o':
+            case 'u':
+                return true;
+            default:
+                return false;
+        }
     }
 
     // EXERCISE 5: CountPositives
@@ -49,7 +93,16 @@ public static class ControlFlow
     // Hint: foreach + if. See Lesson H.
     public static int CountPositives(int[] nums)
     {
-        throw new NotImplementedException("TODO: foreach over nums, increment a counter when > 0");
+        int count = 0;
+        foreach (int number in nums)
+        {
+            if (number > 0)
+            {
+                count++;
+            }
+        }
+
+        return count;
     }
 
     // EXERCISE 6: FirstIndexOf
@@ -59,7 +112,15 @@ public static class ControlFlow
     //       Return `i` as soon as you find a match.
     public static int FirstIndexOf(int[] nums, int target)
     {
-        throw new NotImplementedException("TODO: for loop with index; return i when nums[i] == target; else -1");
+        for (int i = 0; i < nums.Length; i++)
+        {
+            if (nums[i] == target)
+            {
+                return i;
+            }
+        }
+
+        return -1;
     }
 
     // EXERCISE 7: SumUntilNegative
@@ -69,7 +130,18 @@ public static class ControlFlow
     // Hint: foreach + if + break. See Lesson F for break.
     public static int SumUntilNegative(int[] nums)
     {
-        throw new NotImplementedException("TODO: foreach; if n < 0 break; otherwise add to total");
+        int sum = 0;
+        foreach (int number in nums)
+        {
+            if (number < 0)
+            {
+                break;
+            }
+
+            sum += number;
+        }
+
+        return sum;
     }
 
     // EXERCISE 8: ReverseArray
@@ -80,6 +152,11 @@ public static class ControlFlow
     //       nums[nums.Length - 1 - i] into result[i].
     public static int[] ReverseArray(int[] nums)
     {
-        throw new NotImplementedException("TODO: allocate a new int[], copy nums in reverse order");
+        int[] result = new int[nums.Length];
+        for (int i = 0; i < nums.Length; i++)
+        {
+            result[i] = nums[nums.Length - 1 - i];
+        }
+        return result;
     }
 }
