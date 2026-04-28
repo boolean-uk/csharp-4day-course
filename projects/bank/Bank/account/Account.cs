@@ -120,7 +120,7 @@ public class Account
     public void Deposit(TransactionRequest req, DateTime? timestamp = null)
     {
         var transactionProps = CreateCreditProps(req);
-        RecordCredit(transactionProps, timestamp ?? DateTime.UtcNow);
+        RecordCredit(transactionProps, timestamp);
     }
 
     public virtual void Withdraw(TransactionRequest req, DateTime? timestamp = null)
@@ -131,7 +131,7 @@ public class Account
             throw new InsufficientFundsException(transactionProps.Amount, Balance);
         }
 
-        RecordDebit(transactionProps, timestamp ?? DateTime.UtcNow);
+        RecordDebit(transactionProps, timestamp);
     }
 
     public virtual void ApplyInterest(decimal rate)
