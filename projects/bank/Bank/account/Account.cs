@@ -20,8 +20,14 @@ public class Account
         _transactions = new Ledger<Transaction>();
         if (startingBalance > 0)
         {
-            _transactions.Add(new Transaction(TransactionType.Credit, startingBalance, TransactionCategory.Other,
-                "Opening deposit"));
+            var transactionProps = new TransactionProps
+            {
+                Type = TransactionType.Credit,
+                Amount = startingBalance,
+                Category = TransactionCategory.Other,
+                Description = "Opening deposit"
+            };
+            _transactions.Add(new Transaction(transactionProps));
         }
     }
 
@@ -53,58 +59,75 @@ public class Account
 
     public IReadOnlyList<Transaction> Transactions => _transactions.Entries;
 
-    protected void RecordCredit(decimal amount, DateTime timestamp, TransactionCategory category, string description)
+    protected static TransactionProps CreateCreditProps(TransactionRequest req)
     {
-        decimal newBalance = Balance + amount;
-        string desc = description + $" (New Balance: {newBalance:N2})";
-        _transactions.Add(new Transaction(TransactionType.Credit, amount, category, timestamp, desc));
-    }
-
-    protected void RecordDebit(decimal amount, DateTime timestamp, TransactionCategory category, string description)
-    {
-        decimal newBalance = Balance - amount;
-        string desc = description + $" (New Balance: {newBalance:N2})";
-        _transactions.Add(new Transaction(TransactionType.Debit, amount, category, timestamp, desc));
-    }
-
-    public void Deposit(decimal amount, TransactionCategory category = TransactionCategory.Other,
-        string description = "Deposit")
-    {
-        Deposit(amount, DateTime.UtcNow, category, description);
-    }
-
-    public void Deposit(decimal amount, DateTime timestamp, TransactionCategory category = TransactionCategory.Other,
-        string description = "Deposit")
-    {
-        if (amount <= 0)
+        if (req.Amount <= 0)
         {
             throw new ArgumentException("Amount must be greater than 0");
         }
 
-        RecordCredit(amount, timestamp, category, description);
+        return new TransactionProps
+        {
+            Type = TransactionType.Credit,
+            Amount = req.Amount,
+            Category = req.Category ?? TransactionCategory.Other,
+            Description = req.Description ?? "Deposit",
+        };
     }
 
-    public void Withdraw(decimal amount, TransactionCategory category = TransactionCategory.Other,
-        string description = "Withdrawal")
+    protected void RecordCredit(TransactionProps props, DateTime timestamp)
     {
-        Withdraw(amount, DateTime.UtcNow, category, description);
+        decimal newBalance = Balance + props.Amount;
+        string desc = props.Description + $" (New Balance: {newBalance:N2})";
+        var transactionProps = props with
+        {
+            Description = desc,
+        };
+        _transactions.Add(new Transaction(transactionProps, timestamp));
     }
 
-    public virtual void Withdraw(decimal amount, DateTime timestamp,
-        TransactionCategory category = TransactionCategory.Other,
-        string description = "Withdrawal")
+    protected static TransactionProps CreateDebitProps(TransactionRequest req)
     {
-        if (amount <= 0)
+        if (req.Amount <= 0)
         {
             throw new ArgumentException("Amount must be greater than 0");
         }
 
-        if (amount > Balance)
+        return new TransactionProps
         {
-            throw new InsufficientFundsException(amount, Balance);
+            Type = TransactionType.Debit,
+            Amount = req.Amount,
+            Category = req.Category ?? TransactionCategory.Other,
+            Description = req.Description ?? "Withdrawal",
+        };
+    }
+
+    protected void RecordDebit(TransactionProps props, DateTime timestamp)
+    {
+        decimal newBalance = Balance - props.Amount;
+        string desc = props.Description + $" (New Balance: {newBalance:N2})";
+        var transactionProps = props with
+        {
+            Description = desc,
+        };
+        _transactions.Add(new Transaction(transactionProps, timestamp));
+    }
+
+    public void Deposit(TransactionRequest req, DateTime? timestamp = null)
+    {
+        var transactionProps = CreateCreditProps(req);
+        RecordCredit(transactionProps, timestamp ?? DateTime.UtcNow);
+    }
+
+    public virtual void Withdraw(TransactionRequest req, DateTime? timestamp = null)
+    {
+        var transactionProps = CreateDebitProps(req);
+        if (transactionProps.Amount > Balance)
+        {
+            throw new InsufficientFundsException(transactionProps.Amount, Balance);
         }
 
-        RecordDebit(amount, timestamp, category, description);
+        RecordDebit(transactionProps, timestamp ?? DateTime.UtcNow);
     }
 
     public virtual void ApplyInterest(decimal rate)

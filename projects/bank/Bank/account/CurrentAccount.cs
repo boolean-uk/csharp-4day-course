@@ -15,21 +15,15 @@ public class CurrentAccount : Account
         OverdraftLimit = overdraftLimit;
     }
 
-    public override void Withdraw(decimal amount, DateTime timestamp,
-        TransactionCategory category = TransactionCategory.Other,
-        string description = "Withdrawal")
+    public override void Withdraw(TransactionRequest req, DateTime? timestamp = null)
     {
-        if (amount <= 0)
-        {
-            throw new ArgumentException("Amount must be greater than 0");
-        }
-
+        var transactionProps = CreateDebitProps(req);
         decimal availableBalance = Balance + OverdraftLimit;
-        if (amount > availableBalance)
+        if (transactionProps.Amount > availableBalance)
         {
-            throw new InsufficientFundsException(amount, availableBalance);
+            throw new InsufficientFundsException(transactionProps.Amount, availableBalance);
         }
 
-        RecordDebit(amount, timestamp, category, description);
+        RecordDebit(transactionProps, timestamp ?? DateTime.UtcNow);
     }
 }

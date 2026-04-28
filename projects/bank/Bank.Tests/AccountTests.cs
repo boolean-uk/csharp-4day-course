@@ -49,9 +49,9 @@ public class AccountTests
     public void Balance_ReflectsCreditsAndDebits()
     {
         Account a = new Account("ACC-1000", "Ada", 100m);
-        a.Deposit(50m);
-        a.Withdraw(30m);
-        a.Deposit(10m);
+        a.Deposit(new TransactionRequest { Amount = 50m });
+        a.Withdraw(new TransactionRequest { Amount = 30m });
+        a.Deposit(new TransactionRequest { Amount = 10m });
         Assert.Equal(130m, a.Balance);
     }
 
@@ -61,7 +61,7 @@ public class AccountTests
     public void Deposit_AddsCreditTransaction()
     {
         Account a = new Account("ACC-1000", "Ada", 100m);
-        a.Deposit(50m);
+        a.Deposit(new TransactionRequest { Amount = 50m });
         Assert.Equal(2, a.TransactionCount);
         Assert.Equal(TransactionType.Credit, a.Transactions[1].Type);
         Assert.Equal(50m, a.Transactions[1].Amount);
@@ -74,7 +74,7 @@ public class AccountTests
     public void Deposit_ThrowsOnNonPositiveAmount(decimal badAmount)
     {
         Account a = new Account("ACC-1000", "Ada", 100m);
-        Assert.Throws<ArgumentException>(() => a.Deposit(badAmount));
+        Assert.Throws<ArgumentException>(() => a.Deposit(new TransactionRequest { Amount = badAmount }));
     }
 
     // ── Withdraw ───────────────────────────────────────────────────
@@ -83,7 +83,7 @@ public class AccountTests
     public void Withdraw_AddsDebitTransaction()
     {
         Account a = new Account("ACC-1000", "Ada", 100m);
-        a.Withdraw(40m);
+        a.Withdraw(new TransactionRequest { Amount = 40m });
         Assert.Equal(2, a.TransactionCount);
         Assert.Equal(TransactionType.Debit, a.Transactions[1].Type);
         Assert.Equal(40m, a.Transactions[1].Amount);
@@ -94,7 +94,7 @@ public class AccountTests
     public void Withdraw_ThrowsOnInsufficientFunds()
     {
         Account a = new Account("ACC-1000", "Ada", 100m);
-        Assert.Throws<InsufficientFundsException>(() => a.Withdraw(500m));
+        Assert.Throws<InsufficientFundsException>(() => a.Withdraw(new TransactionRequest { Amount = 500m }));
     }
 
     [Fact]
@@ -103,7 +103,7 @@ public class AccountTests
         Account a = new Account("ACC-1000", "Ada", 100m);
         try
         {
-            a.Withdraw(500m);
+            a.Withdraw(new TransactionRequest { Amount = 500m });
         }
         catch (InsufficientFundsException)
         {
@@ -119,7 +119,7 @@ public class AccountTests
     public void Withdraw_ThrowsOnNonPositiveAmount(decimal badAmount)
     {
         Account a = new Account("ACC-1000", "Ada", 100m);
-        Assert.Throws<ArgumentException>(() => a.Withdraw(badAmount));
+        Assert.Throws<ArgumentException>(() => a.Withdraw(new TransactionRequest { Amount = badAmount }));
     }
 
     [Fact]
@@ -146,7 +146,7 @@ public class AccountTests
     public void CurrentAccount_Withdraw_AllowsBalanceToGoNegativeUpToOverdraftLimit()
     {
         CurrentAccount a = new CurrentAccount("ACC-1000", "Ada", 100m, 50m);
-        a.Withdraw(125m);
+        a.Withdraw(new TransactionRequest { Amount = 125m });
         Assert.Equal(-25m, a.Balance);
         Assert.Equal(50m, a.OverdraftLimit);
     }
@@ -155,7 +155,7 @@ public class AccountTests
     public void CurrentAccount_Withdraw_ThrowsWhenOverdraftLimitWouldBeExceeded()
     {
         CurrentAccount a = new CurrentAccount("ACC-1000", "Ada", 100m, 50m);
-        Assert.Throws<InsufficientFundsException>(() => a.Withdraw(151m));
+        Assert.Throws<InsufficientFundsException>(() => a.Withdraw(new TransactionRequest { Amount = 151m }));
     }
 
     // ── Transactions (read-only view) ──────────────────────────────
@@ -188,8 +188,8 @@ public class AccountTests
     public void Statement_ListsEveryTransaction()
     {
         Account a = new Account("ACC-1000", "Ada", 100m);
-        a.Deposit(50m);
-        a.Withdraw(30m);
+        a.Deposit(new TransactionRequest { Amount = 50m });
+        a.Withdraw(new TransactionRequest { Amount = 30m });
         string s = a.Statement();
         Assert.Contains("Opening deposit", s);
         Assert.Contains("Deposit", s);
@@ -212,9 +212,9 @@ public class AccountTests
     public void FindTransactions_ReturnsAllMatchesByDescription()
     {
         Account a = new Account("ACC-1000", "Ada", 100m);
-        a.Deposit(50m);
-        a.Withdraw(30m);
-        a.Deposit(20m);
+        a.Deposit(new TransactionRequest { Amount = 50m });
+        a.Withdraw(new TransactionRequest { Amount = 30m });
+        a.Deposit(new TransactionRequest { Amount = 20m });
 
         // "Deposit" should match both "Opening deposit" (case-insensitive)
         // and the two "Deposit" entries.
@@ -226,7 +226,7 @@ public class AccountTests
     public void FindTransactions_IsCaseInsensitive()
     {
         Account a = new Account("ACC-1000", "Ada", 100m);
-        a.Deposit(50m);
+        a.Deposit(new TransactionRequest { Amount = 50m });
         Assert.Equal(2, a.FindTransactions("DEPOSIT").Count);
         Assert.Equal(2, a.FindTransactions("Deposit").Count);
         Assert.Equal(2, a.FindTransactions("deposit").Count);
@@ -236,7 +236,7 @@ public class AccountTests
     public void FindTransactions_ReturnsEmptyListWhenNothingMatches()
     {
         Account a = new Account("ACC-1000", "Ada", 100m);
-        a.Deposit(50m);
+        a.Deposit(new TransactionRequest { Amount = 50m });
         List<Transaction> matches = a.FindTransactions("transfer");
         Assert.NotNull(matches);
         Assert.Empty(matches);
@@ -249,9 +249,9 @@ public class AccountTests
 
         // Small sleeps ensure distinct timestamps so the sort is verifiable.
         Thread.Sleep(15);
-        a.Deposit(50m);
+        a.Deposit(new TransactionRequest { Amount = 50m });
         Thread.Sleep(15);
-        a.Deposit(20m);
+        a.Deposit(new TransactionRequest { Amount = 20m });
 
         List<Transaction> matches = a.FindTransactions("deposit");
         Assert.Equal(3, matches.Count);
@@ -269,12 +269,14 @@ public class AccountTests
         DateTime from = new DateTime(2026, 1, 10, 0, 0, 0, DateTimeKind.Utc);
         DateTime to = new DateTime(2026, 1, 15, 23, 59, 59, DateTimeKind.Utc);
 
-        a.Deposit(25m, new DateTime(2026, 1, 5, 9, 0, 0, DateTimeKind.Utc), TransactionCategory.Other, "Too early");
-        a.Deposit(50m, new DateTime(2026, 1, 10, 12, 0, 0, DateTimeKind.Utc), TransactionCategory.Other,
-            "In range deposit");
-        a.Withdraw(20m, new DateTime(2026, 1, 15, 18, 30, 0, DateTimeKind.Utc), TransactionCategory.Other,
-            "In range withdrawal");
-        a.Deposit(10m, new DateTime(2026, 1, 20, 9, 0, 0, DateTimeKind.Utc), TransactionCategory.Other, "Too late");
+        a.Deposit(new TransactionRequest { Amount = 25m, Description = "Too early" },
+            new DateTime(2026, 1, 5, 9, 0, 0, DateTimeKind.Utc));
+        a.Deposit(new TransactionRequest { Amount = 50m, Description = "In range deposit" },
+            new DateTime(2026, 1, 10, 12, 0, 0, DateTimeKind.Utc));
+        a.Withdraw(new TransactionRequest { Amount = 20m, Description = "In range withdrawal" },
+            new DateTime(2026, 1, 15, 18, 30, 0, DateTimeKind.Utc));
+        a.Deposit(new TransactionRequest { Amount = 10m, Description = "Too late" },
+            new DateTime(2026, 1, 20, 9, 0, 0, DateTimeKind.Utc));
 
         string s = a.Statement(from, to);
 

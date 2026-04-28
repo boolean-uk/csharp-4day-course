@@ -19,6 +19,12 @@ public class SavingsAccount : Account
             throw new InvalidOperationException("Balance must be greater than 0");
         }
 
-        RecordCredit(Balance * rate, DateTime.UtcNow, TransactionCategory.Interest, $"Interest {rate:P2}");
+        var transactionProps = CreateCreditProps(new TransactionRequest
+        {
+            Amount = Balance * rate,
+            Category = TransactionCategory.Interest,
+            Description = $"Interest {rate:P2}"
+        });
+        RecordCredit(transactionProps, DateTime.UtcNow);
     }
 }

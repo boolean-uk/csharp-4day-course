@@ -72,8 +72,14 @@ public class Bank
             throw new InvalidOperationException("To account not found");
         }
 
-        fromAccount.Withdraw(amount, TransactionCategory.Transfer, $"Transfer to {toAccountNumber}");
-        toAccount.Deposit(amount, TransactionCategory.Transfer, $"Transfer from {fromAccountNumber}");
+        fromAccount.Withdraw(new TransactionRequest
+        {
+            Amount = amount, Category = TransactionCategory.Transfer, Description = $"Transfer to {toAccountNumber}"
+        });
+        toAccount.Deposit(new TransactionRequest
+        {
+            Amount = amount, Category = TransactionCategory.Transfer, Description = $"Transfer from {fromAccountNumber}"
+        });
     }
 
     public void ApplyInterest(decimal rate)

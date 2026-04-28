@@ -8,27 +8,21 @@ public struct Transaction
     public DateTime Timestamp { get; }
     public string Description { get; }
 
-    public Transaction(TransactionType type, decimal amount, TransactionCategory category, string description)
-        : this(type, amount, category, DateTime.UtcNow, description)
+    public Transaction(TransactionProps props) : this(props, DateTime.UtcNow)
     {
     }
 
-    public Transaction(
-        TransactionType type,
-        decimal amount,
-        TransactionCategory category,
-        DateTime timestamp,
-        string description)
+    public Transaction(TransactionProps props, DateTime timestamp)
     {
-        if (amount <= 0)
+        if (props.Amount <= 0)
         {
             throw new ArgumentException("Amount must be greater than 0");
         }
 
-        Type = type;
-        Amount = amount;
-        Category = category;
+        Type = props.Type;
+        Amount = props.Amount;
+        Category = props.Category;
         Timestamp = timestamp;
-        Description = description;
+        Description = props.Description;
     }
 }

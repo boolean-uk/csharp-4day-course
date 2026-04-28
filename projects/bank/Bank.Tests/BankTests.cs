@@ -60,7 +60,7 @@ public class BankTests
         b.OpenSavingsAccount("Ada", 100m);
         b.OpenSavingsAccount("Alan", 250m);
         Account grace = b.OpenCurrentAccount("Grace", 500m, 200m);
-        grace.Withdraw(50m); // Grace now 450
+        grace.Withdraw(new TransactionRequest { Amount = 50m }); // Grace now 450
         Assert.Equal(800m, b.TotalAssets); // 100 + 250 + 450
     }
 
@@ -189,7 +189,7 @@ public class BankTests
         Bank bank = new Bank("Acme");
         Account savings = bank.OpenSavingsAccount("Ada", 100m);
         Account current = bank.OpenCurrentAccount("Alan", 0m, 100m);
-        current.Withdraw(50m);
+        current.Withdraw(new TransactionRequest { Amount = 50m });
         bank.ApplyInterest(0.05m);
         Assert.Equal(105m, savings.Balance);
         Assert.Equal(-50m, current.Balance);
