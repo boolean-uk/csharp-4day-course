@@ -18,7 +18,8 @@ public struct Point
     // Hint: Lesson C in Structs.cs shows the pattern exactly.
     public Point(double x, double y)
     {
-        throw new NotImplementedException("TODO: assign x and y to X and Y");
+        X = x;
+        Y = y;
     }
 
     // EXERCISE 2: IsOrigin
@@ -27,7 +28,7 @@ public struct Point
     // Example: new Point(3, 4).IsOrigin() → false
     public bool IsOrigin()
     {
-        throw new NotImplementedException("TODO: true when both X and Y are 0");
+        return X == 0 && Y == 0;
     }
 
     // EXERCISE 3: DistanceTo
@@ -37,7 +38,7 @@ public struct Point
     // Example: new Point(0, 0).DistanceTo(new Point(3, 4)) → 5
     public double DistanceTo(Point other)
     {
-        throw new NotImplementedException("TODO: Math.Sqrt of the sum of squared differences");
+        return Math.Sqrt(Math.Pow((X - other.X), 2) + Math.Pow((Y - other.Y), 2));
     }
 
     // EXERCISE 4: Translate
@@ -46,6 +47,6 @@ public struct Point
     // Example: new Point(1, 2).Translate(10, 20) → new Point(11, 22)
     public Point Translate(double dx, double dy)
     {
-        throw new NotImplementedException("TODO: return new Point(X + dx, Y + dy)");
+        return new Point(X + dx, Y + dy);
     }
 }

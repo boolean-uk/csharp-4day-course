@@ -1,0 +1,15 @@
+- ASP.NET Core Web API
+- Enable OpenAPI support
+- Use controllers
+- IEnumerable = anything that is iterable (list, array, etc)
+- ApiDbContext = define tables
+- Models = define fields
+- Controllers = api routes
+- Task = js promise
+- seed db in OnModelCreating in ApiDbContext
+
+Visual Studio:
+- Add scaffold
+- EntityFrameworkCore.InMemory nuget package
+- Scalar.AspNetCore nuget package - generate docs from OpenAPI - browser API reference
+- Endpoints explorer

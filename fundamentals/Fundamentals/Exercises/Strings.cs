@@ -9,7 +9,7 @@ public static class Strings
     // Example: Shout("hello") → "HELLO!!!"
     public static string Shout(string message)
     {
-        throw new NotImplementedException("TODO: uppercase the message and append !!!");
+        return message.ToUpper() + "!!!";
     }
 
     // EXERCISE 2: CountVowels
@@ -19,7 +19,18 @@ public static class Strings
     //       of vowels. Lowercase the char first with char.ToLower(c).
     public static int CountVowels(string text)
     {
-        throw new NotImplementedException("TODO: loop over each char, count vowels");
+        HashSet<char> vowels = [ 'a', 'e', 'i', 'o', 'u' ];
+
+        int count = 0;
+        foreach (char character in text)
+        {
+            if (vowels.Contains(char.ToLower(character)))
+            {
+                count++;
+            }
+        }
+
+        return count;
     }
 
     // EXERCISE 3: IsPalindrome
@@ -29,7 +40,7 @@ public static class Strings
     //       new string(word.Reverse().ToArray()) — Reverse comes from LINQ (already using'd).
     public static bool IsPalindrome(string word)
     {
-        throw new NotImplementedException("TODO: compare word to its reverse, case-insensitive");
+        return string.Equals(word, new string(word.Reverse().ToArray()), StringComparison.OrdinalIgnoreCase);
     }
 
     // EXERCISE 4: FormatPrice
@@ -40,7 +51,7 @@ public static class Strings
     //       the output is the same regardless of system locale.)
     public static string FormatPrice(decimal amount)
     {
-        throw new NotImplementedException("TODO: prepend £ and format to 2 decimals");
+        return $"£{amount:F2}";
     }
 
     // EXERCISE 5: SafeParseInt
@@ -49,6 +60,6 @@ public static class Strings
     // Hint: use int.TryParse — don't let a FormatException escape.
     public static int SafeParseInt(string input)
     {
-        throw new NotImplementedException("TODO: use int.TryParse and return -1 on failure");
+        return int.TryParse(input, out int parsed) ? parsed : -1;
     }
 }
