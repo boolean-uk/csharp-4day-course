@@ -24,6 +24,6 @@ public class CurrentAccount : Account
             throw new InsufficientFundsException(transactionProps.Amount, availableBalance);
         }
 
-        RecordDebit(transactionProps, timestamp ?? DateTime.UtcNow);
+        RecordDebit(transactionProps, timestamp);
     }
 }

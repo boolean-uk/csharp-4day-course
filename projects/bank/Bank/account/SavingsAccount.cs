@@ -25,6 +25,6 @@ public class SavingsAccount : Account
             Category = TransactionCategory.Interest,
             Description = $"Interest {rate:P2}"
         });
-        RecordCredit(transactionProps, DateTime.UtcNow);
+        RecordCredit(transactionProps);
     }
 }

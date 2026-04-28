@@ -75,7 +75,7 @@ public class Account
         };
     }
 
-    protected void RecordCredit(TransactionProps props, DateTime timestamp)
+    protected void RecordCredit(TransactionProps props, DateTime? timestamp = null)
     {
         decimal newBalance = Balance + props.Amount;
         string desc = props.Description + $" (New Balance: {newBalance:N2})";
@@ -83,7 +83,9 @@ public class Account
         {
             Description = desc,
         };
-        _transactions.Add(new Transaction(transactionProps, timestamp));
+        _transactions.Add(timestamp is not null
+            ? new Transaction(transactionProps, timestamp.Value)
+            : new Transaction(transactionProps));
     }
 
     protected static TransactionProps CreateDebitProps(TransactionRequest req)
@@ -102,7 +104,7 @@ public class Account
         };
     }
 
-    protected void RecordDebit(TransactionProps props, DateTime timestamp)
+    protected void RecordDebit(TransactionProps props, DateTime? timestamp = null)
     {
         decimal newBalance = Balance - props.Amount;
         string desc = props.Description + $" (New Balance: {newBalance:N2})";
@@ -110,7 +112,9 @@ public class Account
         {
             Description = desc,
         };
-        _transactions.Add(new Transaction(transactionProps, timestamp));
+        _transactions.Add(timestamp is not null
+            ? new Transaction(transactionProps, timestamp.Value)
+            : new Transaction(transactionProps));
     }
 
     public void Deposit(TransactionRequest req, DateTime? timestamp = null)
